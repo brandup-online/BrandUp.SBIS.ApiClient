@@ -55,9 +55,7 @@ namespace BrandUp.SBIS.ApiClient.Tests
         {
             #region Preparation
 
-            var listResponse = await shopClient.GetSalesPointListAsync(default);
-            Assert.NotNull(listResponse);
-            var salesPoint = listResponse.SalesPoints.First();
+            var salesPoint = await shopClient.GetSalesPointAsync(new Requests.SalesPointRequest { PointId = 173 }, default);
             Assert.NotNull(salesPoint);
 
             var pricelist = await shopClient.GetPriceListsAsync(new() { PointId = salesPoint.Id, ActualDate = DateOnly.FromDateTime(DateTime.UtcNow) }, default);
@@ -65,7 +63,8 @@ namespace BrandUp.SBIS.ApiClient.Tests
 
             #endregion
 
-            var response = await shopClient.GetNomenclatureAsync(new() { PointId = salesPoint.Id, PriceListId = pricelist.PriceLists.First().Id.Value }, default);
+            var paricelistFirst = pricelist.PriceLists.Last();
+            var response = await shopClient.GetNomenclatureAsync(new() { PointId = salesPoint.Id, PriceListId = paricelistFirst.Id.Value }, default);
             Assert.NotNull(response);
         }
 
@@ -103,16 +102,19 @@ namespace BrandUp.SBIS.ApiClient.Tests
             var pricelist = await shopClient.GetPriceListsAsync(new() { PointId = salesPoint.Id, ActualDate = DateOnly.FromDateTime(DateTime.UtcNow) }, default);
             Assert.NotNull(pricelist);
 
-            var nomenclature = await shopClient.GetNomenclatureAsync(new() { PointId = salesPoint.Id, PriceListId = pricelist.PriceLists.First().Id.Value }, default);
+            var nomenclature = await shopClient.GetNomenclatureAsync(new() { PointId = salesPoint.Id, PriceListId = pricelist.PriceLists.Last().Id.Value }, default);
             Assert.NotNull(nomenclature);
+
+            var companies = await shopClient.GetCompaniesAsync(default);
+            var warehouses = await shopClient.GetWarehousesAsync(new() { CompanyId = companies.Companies.First().CompanyId }, default);
 
             #endregion
 
             var response = await shopClient.GetBalancesAsync(new()
             {
                 Nomenclatures = new(nomenclature.Nomenclatures.Select(n => n.Id.Value)),
-                Companies = new(),
-                Warehouses = new()
+                Companies = new(companies.Companies.Select(c => c.CompanyId)),
+                Warehouses = new(warehouses.Warehouses.Select(w => w.Id))
             }, default);
             Assert.NotNull(response);
         }

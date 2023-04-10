@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Collections;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 
 namespace BrandUp.SBIS.ApiClient
@@ -67,7 +68,7 @@ namespace BrandUp.SBIS.ApiClient
 
         public Task<BalancesResponse> GetBalancesAsync(BalancesRequest request, CancellationToken cancellationToken)
         {
-            return GetAsync<BalancesResponse>(ToGetRequest("/retail/point/list", request), cancellationToken);
+            return GetAsync<BalancesResponse>(ToGetRequest("/retail/nomenclature/balances", request), cancellationToken);
         }
 
         #endregion
@@ -126,7 +127,23 @@ namespace BrandUp.SBIS.ApiClient
                     continue;
 
                 if (value.GetType().IsAssignableTo(typeof(IEnumerable)))
-                    pairs.Add($"{prop.Name.ToCamelCase()}=[{string.Join(',', value)}]");
+                {
+                    var collection = (IEnumerable)value;
+
+                    var sb = new StringBuilder();
+                    sb.Append('[');
+                    foreach (var item in collection)
+                    {
+                        sb.Append(item.ToString());
+                        sb.Append(',');
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+                    sb.Append(']');
+                    if (sb.Length == 1)
+                        continue;
+
+                    pairs.Add($"{prop.Name.ToCamelCase()}={sb}");
+                }
                 else if (value is DateTime dateTime)
                     pairs.Add($"{prop.Name.ToCamelCase()}={dateTime:yyyy-MM-dd}");
                 else if (value is DateOnly date)
