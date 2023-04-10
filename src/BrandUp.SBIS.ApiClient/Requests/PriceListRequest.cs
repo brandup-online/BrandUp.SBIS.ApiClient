@@ -16,7 +16,7 @@
         /// <summary>
         /// Название прайса, который требуется найти
         /// </summary>
-        public string? SearchString { get; set; }
+        public string SearchString { get; set; }
         /// <summary>
         /// Номер страницы
         /// </summary>
