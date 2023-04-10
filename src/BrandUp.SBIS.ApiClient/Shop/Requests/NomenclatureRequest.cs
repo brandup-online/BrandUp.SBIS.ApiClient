@@ -1,4 +1,4 @@
-﻿namespace BrandUp.SBIS.ApiClient.Requests
+﻿namespace BrandUp.SBIS.ApiClient.Shop.Requests
 {
     /// <summary>
     /// Запрос возвращает информацию о товарах и услугах по действующему прайс-листу.

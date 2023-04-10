@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace BrandUp.SBIS.ApiClient
+namespace BrandUp.SBIS.ApiClient.Shop.Responses
 {
     public class BalancesResponse
     {

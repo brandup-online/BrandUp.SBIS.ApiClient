@@ -1,4 +1,4 @@
-﻿namespace BrandUp.SBIS.ApiClient.Requests
+﻿namespace BrandUp.SBIS.ApiClient.Shop.Requests
 {
     /// <summary>
     /// Запрос возвращает информацию о действующих прайс-листах. Чтобы запрос работал корректно, настройте прайс-лист с типом «Выбранные наименования».

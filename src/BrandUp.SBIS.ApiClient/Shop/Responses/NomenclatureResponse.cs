@@ -1,7 +1,7 @@
-﻿using BrandUp.SBIS.ApiClient.Responses.Common;
+﻿using BrandUp.SBIS.ApiClient.Shop.Responses.Common;
 using System.Text.Json.Serialization;
 
-namespace BrandUp.SBIS.ApiClient.Responses
+namespace BrandUp.SBIS.ApiClient.Shop.Responses
 {
     public class NomenclatureResponse
     {

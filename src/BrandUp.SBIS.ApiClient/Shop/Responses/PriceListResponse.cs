@@ -1,6 +1,6 @@
-﻿using BrandUp.SBIS.ApiClient.Responses.Common;
+﻿using BrandUp.SBIS.ApiClient.Shop.Responses.Common;
 
-namespace BrandUp.SBIS.ApiClient.Responses
+namespace BrandUp.SBIS.ApiClient.Shop.Responses
 {
     public class PriceListResponse
     {

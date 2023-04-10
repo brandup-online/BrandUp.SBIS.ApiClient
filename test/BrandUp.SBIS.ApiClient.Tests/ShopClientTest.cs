@@ -1,3 +1,4 @@
+using BrandUp.SBIS.ApiClient.Clients;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BrandUp.SBIS.ApiClient.Tests
@@ -55,7 +56,7 @@ namespace BrandUp.SBIS.ApiClient.Tests
         {
             #region Preparation
 
-            var salesPoint = await shopClient.GetSalesPointAsync(new Requests.SalesPointRequest { PointId = 173 }, default);
+            var salesPoint = await shopClient.GetSalesPointAsync(new Shop.Requests.SalesPointRequest { PointId = 173 }, default);
             Assert.NotNull(salesPoint);
 
             var pricelist = await shopClient.GetPriceListsAsync(new() { PointId = salesPoint.Id, ActualDate = DateOnly.FromDateTime(DateTime.UtcNow) }, default);

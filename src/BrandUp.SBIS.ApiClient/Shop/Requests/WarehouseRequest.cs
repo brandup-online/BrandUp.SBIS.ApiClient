@@ -1,4 +1,4 @@
-﻿namespace BrandUp.SBIS.ApiClient.Requests
+﻿namespace BrandUp.SBIS.ApiClient.Shop.Requests
 {
     public class WarehouseRequest
     {
