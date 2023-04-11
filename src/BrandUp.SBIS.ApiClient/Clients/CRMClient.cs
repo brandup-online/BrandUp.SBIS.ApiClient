@@ -1,4 +1,5 @@
 ﻿using BrandUp.SBIS.ApiClient.CRM.Requests;
+using BrandUp.SBIS.ApiClient.Helpers;
 using BrandUp.SBIS.ApiClient.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -25,9 +26,9 @@ namespace BrandUp.SBIS.ApiClient.Clients
             throw new NotImplementedException();
         }
 
-        public Task GetCustomerAsync(CancellationToken cancellationToken)
+        public Task<string> GetCustomerAsync(GetCustomerRequest request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return PostAsync<string, GetCustomerRequest>(request, cancellationToken);
         }
 
         public Task GetLeadStatusAsync(CancellationToken cancellationToken)
@@ -40,44 +41,52 @@ namespace BrandUp.SBIS.ApiClient.Clients
             throw new NotImplementedException();
         }
 
-        public Task GetThemeListAsync(CancellationToken cancellationToken)
+        public Task<string> GetThemeListAsync(ThemeListRequest request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return PostAsync<string, ThemeListRequest>(request, cancellationToken);
         }
 
-        public Task InsertRecordAsync(CancellationToken cancellationToken)
+        public Task<string> InsertRecordAsync(InsertRecordRequest request, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
         public Task<string> SaveCustomerAsync(SaveCustomerRequest request, CancellationToken cancellationToken)
         {
-            var rpcRequest = new RPCRequest<SaveCustomerRequest>()
-            {
-                Method = "CRMLead.insertRecord",
-                Params = request
-            };
-
-            return PostAsync<string, RPCRequest<SaveCustomerRequest>>(rpcRequest, "application/json-rpc", cancellationToken);
+            return PostAsync<string, SaveCustomerRequest>(request, cancellationToken);
         }
 
-        public Task SaveContrahenAsync(CancellationToken cancellationToken)
+        public Task<string> SaveCounterpartyAsync(CounterpartyRequest request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return PostAsync<string, CounterpartyRequest>(request, cancellationToken);
         }
 
+        #endregion
+
+        #region Helpers
+
+        protected async Task<TResponse> PostAsync<TResponse, TRequest>(TRequest request, CancellationToken cancellationToken)
+        {
+            if (!IsAuthorize)
+                await AuthorizationAsync(cancellationToken);
+
+            using var httpRequest = new HttpRequestMessage(HttpMethod.Post, (Uri)null);
+            httpRequest.Content = JsonRpcContent.Create(request, options);
+
+            return await ExecuteAsync<TResponse>(httpRequest, cancellationToken);
+        }
         #endregion
     }
 
     public interface ICRMClient
     {
-        public Task InsertRecordAsync(CancellationToken cancellationToken);
-        public Task GetThemeListAsync(CancellationToken cancellationToken);
-        public Task GetThemeByNameAsync(CancellationToken cancellationToken);
-        public Task GetLeadStatusAsync(CancellationToken cancellationToken);
-        public Task AddEventAsync(CancellationToken cancellationToken);
-        public Task GetCustomerAsync(CancellationToken cancellationToken);
-        public Task<string> SaveCustomerAsync(SaveCustomerRequest request, CancellationToken cancellationToken);
-        public Task SaveContrahenAsync(CancellationToken cancellationToken);
+        Task<string> InsertRecordAsync(InsertRecordRequest request, CancellationToken cancellationToken);
+        Task<string> GetThemeListAsync(ThemeListRequest request, CancellationToken cancellationToken);
+        Task GetThemeByNameAsync(CancellationToken cancellationToken);
+        Task GetLeadStatusAsync(CancellationToken cancellationToken);
+        Task AddEventAsync(CancellationToken cancellationToken);
+        Task<string> GetCustomerAsync(GetCustomerRequest request, CancellationToken cancellationToken);
+        Task<string> SaveCustomerAsync(SaveCustomerRequest request, CancellationToken cancellationToken);
+        Task<string> SaveCounterpartyAsync(CounterpartyRequest request, CancellationToken cancellationToken);
     }
 }

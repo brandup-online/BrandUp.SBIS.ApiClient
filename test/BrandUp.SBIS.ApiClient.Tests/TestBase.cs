@@ -8,9 +8,11 @@ namespace BrandUp.SBIS.ApiClient.Tests
     {
         readonly ServiceProvider rootServiceProvider;
         readonly IServiceScope serviceScope;
+        readonly IConfiguration configuration;
 
         public IServiceProvider RootServices => rootServiceProvider;
         public IServiceProvider Services => serviceScope.ServiceProvider;
+        public IConfiguration Configuration => configuration;
 
         public TestBase()
         {
@@ -20,7 +22,7 @@ namespace BrandUp.SBIS.ApiClient.Tests
             .AddUserSecrets(typeof(TestBase).Assembly)
             .AddJsonFile("appsettings.test.json", true);
 
-            var configuration = configBuilder.Build();
+            configuration = configBuilder.Build();
 
             services.AddLogging(builder => builder.AddDebug());
 

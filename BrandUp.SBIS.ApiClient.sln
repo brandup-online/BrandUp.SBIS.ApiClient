@@ -5,6 +5,7 @@ VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{15BD8AE0-F6AC-4502-9C76-BBECF3933B39}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		README.md = README.md
@@ -12,13 +13,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrandUp.SBIS.ApiClient", "src\BrandUp.SBIS.ApiClient\BrandUp.SBIS.ApiClient.csproj", "{26155EF4-BE0E-4DC7-A49E-E5319F590E5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrandUp.SBIS.Test", "src\BrandUp.SBIS.Test\BrandUp.SBIS.Test.csproj", "{58660871-8FE6-4CF9-81A3-1B7D3828B3C0}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{749957C8-70EB-4929-878F-31362A121B96}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{04BE634B-538C-45F7-94CD-0320FF433FB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrandUp.SBIS.ApiClient.Tests", "test\BrandUp.SBIS.ApiClient.Tests\BrandUp.SBIS.ApiClient.Tests.csproj", "{B6429FBC-F8FA-49FA-BCFF-EDB25DDE626D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrandUp.SBIS.ApiClient.Tests", "test\BrandUp.SBIS.ApiClient.Tests\BrandUp.SBIS.ApiClient.Tests.csproj", "{B6429FBC-F8FA-49FA-BCFF-EDB25DDE626D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,10 +29,6 @@ Global
 		{26155EF4-BE0E-4DC7-A49E-E5319F590E5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26155EF4-BE0E-4DC7-A49E-E5319F590E5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26155EF4-BE0E-4DC7-A49E-E5319F590E5B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{58660871-8FE6-4CF9-81A3-1B7D3828B3C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{58660871-8FE6-4CF9-81A3-1B7D3828B3C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{58660871-8FE6-4CF9-81A3-1B7D3828B3C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{58660871-8FE6-4CF9-81A3-1B7D3828B3C0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B6429FBC-F8FA-49FA-BCFF-EDB25DDE626D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B6429FBC-F8FA-49FA-BCFF-EDB25DDE626D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6429FBC-F8FA-49FA-BCFF-EDB25DDE626D}.Release|Any CPU.ActiveCfg = Release|Any CPU
