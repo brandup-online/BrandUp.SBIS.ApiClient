@@ -1,5 +1,6 @@
-﻿using BrandUp.SBIS.ApiClient.Clients;
-using BrandUp.SBIS.ApiClient.Options;
+﻿using BrandUp.SBIS.ApiClient.Base;
+using BrandUp.SBIS.ApiClient.Clients;
+using BrandUp.SBIS.ApiClient.CRM;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BrandUp.SBIS.ApiClient
@@ -15,7 +16,7 @@ namespace BrandUp.SBIS.ApiClient
             });
             services.AddHttpClient<CRMClient>(options =>
             {
-                options.BaseAddress = new("https://online.sbis.ru/service/?x_version=20.7202-3");
+                options.BaseAddress = new("https://online.sbis.ru/service");
             });
             return services;
         }

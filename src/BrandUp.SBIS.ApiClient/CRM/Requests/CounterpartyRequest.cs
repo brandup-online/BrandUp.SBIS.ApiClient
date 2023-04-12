@@ -8,7 +8,7 @@ namespace BrandUp.SBIS.ApiClient.CRM.Requests
     {
         [JsonPropertyName("Лицо")]
         public int? ClientId { get; set; }
-        [JsonPropertyName("Лицо")]
+        [JsonPropertyName("ИНН")]
         public string INN { get; set; }
         [JsonPropertyName("КПП")]
         public string KPP { get; set; }

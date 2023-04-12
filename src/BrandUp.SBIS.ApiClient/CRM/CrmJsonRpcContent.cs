@@ -7,9 +7,9 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
-namespace BrandUp.SBIS.ApiClient.Helpers
+namespace BrandUp.SBIS.ApiClient.CRM.Serialization
 {
-    internal class JsonRpcContent : HttpContent
+    internal class CrmJsonRpcContent : HttpContent
     {
         readonly object content;
         readonly Type contentType;
@@ -17,7 +17,7 @@ namespace BrandUp.SBIS.ApiClient.Helpers
 
         private long contentLength;
 
-        public JsonRpcContent(object content, Type contentType, JsonSerializerOptions options)
+        public CrmJsonRpcContent(object content, Type contentType, JsonSerializerOptions options)
         {
             this.content = content ?? throw new ArgumentNullException(nameof(content));
             this.contentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
@@ -26,18 +26,23 @@ namespace BrandUp.SBIS.ApiClient.Helpers
             Headers.ContentType = MediaTypeHeaderValue.Parse("application/json-rpc");
         }
 
-        public static JsonRpcContent Create<T>(T content, JsonSerializerOptions options)
+        public static CrmJsonRpcContent Create<T>(T content, JsonSerializerOptions options)
         {
             return new(content, typeof(T), options);
         }
 
         #region HttpContent members
 
-        protected override async Task SerializeToStreamAsync(Stream stream, TransportContext context)
+        protected override Task SerializeToStreamAsync(Stream stream, TransportContext context)
         {
-            using var jsonStream = await SerializeToRpcCommandAsync();
+            throw new NotImplementedException();
+        }
 
-            await jsonStream.CopyToAsync(stream);
+        protected override async Task SerializeToStreamAsync(Stream stream, TransportContext context, CancellationToken cancellationToken)
+        {
+            using var jsonStream = await CrmSerializer.SerializeAsync(content, contentType, cancellationToken);
+
+            await jsonStream.CopyToAsync(stream, cancellationToken);
             contentLength = jsonStream.Length;
         }
 
@@ -133,7 +138,9 @@ namespace BrandUp.SBIS.ApiClient.Helpers
             if (type == typeof(string))
                 return (JsonValue.Create((string)property.GetValue(obj)), "Строка");
             if (type == typeof(bool))
-                return (JsonValue.Create((string)property.GetValue(obj)), "Логическое");
+                return (JsonValue.Create((bool)property.GetValue(obj)), "Логическое");
+            if (type == typeof(DateTime))
+                return (JsonValue.Create((DateTime)property.GetValue(obj)), "Дата и время");
 
             if (type.IsAssignableFrom(typeof(IEnumerable)))
             {
@@ -151,7 +158,7 @@ namespace BrandUp.SBIS.ApiClient.Helpers
             if (!type.IsSerializable)
             {
                 var dataObj = property.GetValue(obj);
-                var node = SerializeObject(Name(property), property.PropertyType.GetProperties(), dataObj);
+                var node = SerializeObject(null, property.PropertyType.GetProperties(), dataObj);
 
                 return (node, "Запись");
             }

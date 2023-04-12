@@ -1,5 +1,5 @@
-﻿using BrandUp.SBIS.ApiClient.Extensions;
-using BrandUp.SBIS.ApiClient.Options;
+﻿using BrandUp.SBIS.ApiClient.Base;
+using BrandUp.SBIS.ApiClient.Extensions;
 using BrandUp.SBIS.ApiClient.Shop.Requests;
 using BrandUp.SBIS.ApiClient.Shop.Responses;
 using Microsoft.Extensions.Logging;

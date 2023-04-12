@@ -1,11 +1,10 @@
-﻿using BrandUp.SBIS.ApiClient.Options;
-using BrandUp.SBIS.ApiClient.Shop.Responses;
+﻿using BrandUp.SBIS.ApiClient.Shop.Responses;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 
-namespace BrandUp.SBIS.ApiClient.Clients
+namespace BrandUp.SBIS.ApiClient.Base
 {
     public abstract class ClientBase
     {
@@ -48,11 +47,12 @@ namespace BrandUp.SBIS.ApiClient.Clients
 
             var data = await reader.ReadToEndAsync();
 
+            if (typeof(T) == typeof(string))
+                return (T)(object)await response.Content.ReadAsStringAsync(cancellationToken);
+
             if (!response.IsSuccessStatusCode)
                 return default;
 
-            if (typeof(T) == typeof(string))
-                return (T)(object)await response.Content.ReadAsStringAsync(cancellationToken);
             try
             {
                 return await response.Content.ReadFromJsonAsync<T>(options, cancellationToken);

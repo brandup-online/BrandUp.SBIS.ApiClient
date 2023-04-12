@@ -1,8 +1,7 @@
 ﻿using BrandUp.SBIS.ApiClient.CRM.Attributes;
-using BrandUp.SBIS.ApiClient.CRM.Requests;
 using System.Text.Json.Serialization;
 
-namespace BrandUp.SBIS.ApiClient.Clients
+namespace BrandUp.SBIS.ApiClient.CRM.Requests
 {
     [RpcCommandInfo(RootName = "client_data", Command = "CRMClients.GetCustomerByParams")]
     public class GetCustomerRequest
@@ -10,13 +9,21 @@ namespace BrandUp.SBIS.ApiClient.Clients
         [JsonPropertyName("UUID")]
         public Guid? UUId { get; set; }
         public int? CustomerID { get; set; }
-        public string Surname { get; set; }
-        public string Name { get; set; }
-        public string Patronymic { get; set; }
+        public string ExternalId { get; set; }
+        /// <summary>
+        /// Имя
+        /// </summary>
+        public string FirstName { get; set; }
+        /// <summary>
+        /// Фамилия
+        /// </summary>
+        public string LastName { get; set; }
+        /// <summary>
+        /// Отчество
+        /// </summary>
+        public string SecondName { get; set; }
         public List<Contact> ContactData { get; set; }
-        public bool? SoftUpdate { get; set; }
-        public int? Gender { get; set; }
-        public string Address { get; set; }
-        public DateTime? BirthDay { get; set; }
+        public string INN { get; set; }
+        public string SNILS { get; set; }
     }
 }

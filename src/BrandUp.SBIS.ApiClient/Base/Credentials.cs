@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace BrandUp.SBIS.ApiClient.Options
+namespace BrandUp.SBIS.ApiClient.Base
 {
     public class Credentials
     {

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace BrandUp.SBIS.ApiClient.Tests
+namespace BrandUp.SBIS.ApiClient
 {
     public abstract class TestBase : IAsyncLifetime
     {

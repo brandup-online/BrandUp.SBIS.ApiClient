@@ -1,7 +1,7 @@
 using BrandUp.SBIS.ApiClient.Clients;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BrandUp.SBIS.ApiClient.Tests
+namespace BrandUp.SBIS.ApiClient
 {
     public class ShopClientTest : TestBase
     {
