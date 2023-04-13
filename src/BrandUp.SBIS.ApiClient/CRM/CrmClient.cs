@@ -30,9 +30,9 @@ namespace BrandUp.SBIS.ApiClient.CRM
             return PostAsync<string, GetCustomerRequest>(request, cancellationToken);
         }
 
-        public Task<LeadInfoResponse> GetLeadStatusAsync(LeadStatusRequest request, CancellationToken cancellationToken)
+        public Task<string> GetLeadStatusAsync(LeadStatusRequest request, CancellationToken cancellationToken)
         {
-            return PostAsync<LeadInfoResponse, LeadStatusRequest>(request, cancellationToken);
+            return PostAsync<string, LeadStatusRequest>(request, cancellationToken);
         }
 
         public Task<string> GetThemeByNameAsync(ThemeNameRequest request, CancellationToken cancellationToken)
@@ -84,7 +84,7 @@ namespace BrandUp.SBIS.ApiClient.CRM
         Task<CreateLeadResponse> InsertRecordAsync(InsertRecordRequest request, CancellationToken cancellationToken);
         Task<string> GetThemeListAsync(ThemeListRequest request, CancellationToken cancellationToken);
         Task<string> GetThemeByNameAsync(ThemeNameRequest request, CancellationToken cancellationToken);
-        Task<LeadInfoResponse> GetLeadStatusAsync(LeadStatusRequest request, CancellationToken cancellationToken);
+        Task<string> GetLeadStatusAsync(LeadStatusRequest request, CancellationToken cancellationToken);
         Task<EventResponse> AddEventAsync(AddEventRequest request, CancellationToken cancellationToken);
         Task<string> GetCustomerAsync(GetCustomerRequest request, CancellationToken cancellationToken);
         Task<SaveClientResponse> SaveCustomerAsync(SaveCustomerRequest request, CancellationToken cancellationToken);

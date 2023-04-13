@@ -107,7 +107,7 @@ namespace BrandUp.SBIS.ApiClient
         public async void Success_GetLeadStatus()
         {
             var response = await client.GetLeadStatusAsync(new() { DocumentId = Guid.Parse("37c3a18d-ac1e-4eb5-a1bd-89776aad46b2") }, CancellationToken.None);
-            //output.WriteLine(response);
+            output.WriteLine(response);
             Assert.NotNull(response);
         }
 
