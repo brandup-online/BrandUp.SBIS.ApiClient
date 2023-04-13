@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace BrandUp.SBIS.ApiClient.Shop.Responses
+namespace BrandUp.SBIS.ApiClient.Base
 {
     public class AuthResponse
     {

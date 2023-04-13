@@ -1,23 +1,28 @@
-﻿using BrandUp.SBIS.ApiClient.Base;
-using BrandUp.SBIS.ApiClient.CRM.Requests;
-using BrandUp.SBIS.ApiClient.CRM.Responses;
-using BrandUp.SBIS.ApiClient.CRM.Serialization;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System.Text.Json;
-
-namespace BrandUp.SBIS.ApiClient.CRM
+﻿namespace BrandUp.SBIS.ApiClient.CRM
 {
     public class CRMClient : ClientBase, ICRMClient
     {
-        public CRMClient(HttpClient httpClient, ILogger<CRMClient> logger, IOptions<Credentials> credentials) : base(httpClient, credentials.Value, logger) { }
-        protected override JsonSerializerOptions JsonSerializerOptions()
+        public CRMClient(HttpClient httpClient, ILogger<CRMClient> logger, IOptions<Credentials> credentials) : base(httpClient, credentials.Value, logger)
+        { }
+
+        #region Virtual members
+
+        protected override HttpRequestMessage ToJsonRpcRequest<T>(T content)
         {
-            return new()
+            var message = new HttpRequestMessage(HttpMethod.Post, (Uri)null)
             {
-                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+                Content = CrmJsonRpcContent.Create(content)
             };
+
+            return message;
         }
+
+        protected override async Task<T> DeserializeResponseAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken)
+        {
+            return await CrmSerializer.DeserializeAsync<T>(await response.Content.ReadAsStreamAsync(cancellationToken), cancellationToken);
+        }
+
+        #endregion
 
         #region ICRMClient members
 
@@ -25,9 +30,10 @@ namespace BrandUp.SBIS.ApiClient.CRM
         {
             return PostAsync<EventResponse, AddEventRequest>(request, cancellationToken);
         }
-        public Task<string> GetCustomerAsync(GetCustomerRequest request, CancellationToken cancellationToken)
+
+        public Task<CustomerResponse> GetCustomerAsync(GetCustomerRequest request, CancellationToken cancellationToken)
         {
-            return PostAsync<string, GetCustomerRequest>(request, cancellationToken);
+            return PostAsync<CustomerResponse, GetCustomerRequest>(request, cancellationToken);
         }
 
         public Task<string> GetLeadStatusAsync(LeadStatusRequest request, CancellationToken cancellationToken)
@@ -35,14 +41,14 @@ namespace BrandUp.SBIS.ApiClient.CRM
             return PostAsync<string, LeadStatusRequest>(request, cancellationToken);
         }
 
-        public Task<string> GetThemeByNameAsync(ThemeNameRequest request, CancellationToken cancellationToken)
+        public Task<ThemeResponse> GetThemeByNameAsync(ThemeNameRequest request, CancellationToken cancellationToken)
         {
-            return PostAsync<string, ThemeNameRequest>(request, cancellationToken);
+            return PostAsync<ThemeResponse, ThemeNameRequest>(request, cancellationToken);
         }
 
-        public Task<string> GetThemeListAsync(ThemeListRequest request, CancellationToken cancellationToken)
+        public Task<ThemesListResponse> GetThemeListAsync(ThemeListRequest request, CancellationToken cancellationToken)
         {
-            return PostAsync<string, ThemeListRequest>(request, cancellationToken);
+            return PostAsync<ThemesListResponse, ThemeListRequest>(request, cancellationToken);
         }
 
         public Task<CreateLeadResponse> InsertRecordAsync(InsertRecordRequest request, CancellationToken cancellationToken)
@@ -60,20 +66,13 @@ namespace BrandUp.SBIS.ApiClient.CRM
             return PostAsync<SaveClientResponse, SaveCustomerRequest>(request, cancellationToken);
         }
 
-
         #endregion
 
         #region Helpers
 
         protected async Task<TResponse> PostAsync<TResponse, TRequest>(TRequest request, CancellationToken cancellationToken)
         {
-            if (!IsAuthorize)
-                await AuthorizationAsync(cancellationToken);
-
-            using var httpRequest = new HttpRequestMessage(HttpMethod.Post, (Uri)null);
-            httpRequest.Content = CrmJsonRpcContent.Create(request, options);
-
-            return await ExecuteAsync<TResponse>(httpRequest, cancellationToken);
+            return await ExecuteAsync<TResponse>(ToJsonRpcRequest(request), cancellationToken);
         }
 
         #endregion
@@ -82,11 +81,11 @@ namespace BrandUp.SBIS.ApiClient.CRM
     public interface ICRMClient
     {
         Task<CreateLeadResponse> InsertRecordAsync(InsertRecordRequest request, CancellationToken cancellationToken);
-        Task<string> GetThemeListAsync(ThemeListRequest request, CancellationToken cancellationToken);
-        Task<string> GetThemeByNameAsync(ThemeNameRequest request, CancellationToken cancellationToken);
-        Task<string> GetLeadStatusAsync(LeadStatusRequest request, CancellationToken cancellationToken);
+        Task<ThemesListResponse> GetThemeListAsync(ThemeListRequest request, CancellationToken cancellationToken);
+        Task<ThemeResponse> GetThemeByNameAsync(ThemeNameRequest request, CancellationToken cancellationToken);
+        Task<LeadInfoResponse> GetLeadStatusAsync(LeadStatusRequest request, CancellationToken cancellationToken);
         Task<EventResponse> AddEventAsync(AddEventRequest request, CancellationToken cancellationToken);
-        Task<string> GetCustomerAsync(GetCustomerRequest request, CancellationToken cancellationToken);
+        Task<CustomerResponse> GetCustomerAsync(GetCustomerRequest request, CancellationToken cancellationToken);
         Task<SaveClientResponse> SaveCustomerAsync(SaveCustomerRequest request, CancellationToken cancellationToken);
         Task<SaveCounterpartyResponse> SaveCounterpartyAsync(CounterpartyRequest request, CancellationToken cancellationToken);
     }

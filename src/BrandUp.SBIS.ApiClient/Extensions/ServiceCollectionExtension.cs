@@ -16,7 +16,7 @@ namespace BrandUp.SBIS.ApiClient
             });
             services.AddHttpClient<CRMClient>(options =>
             {
-                options.BaseAddress = new("https://online.sbis.ru/service");
+                options.BaseAddress = new("https://online.sbis.ru/service/");
             });
             return services;
         }

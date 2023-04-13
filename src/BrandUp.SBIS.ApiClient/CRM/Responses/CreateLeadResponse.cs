@@ -8,7 +8,7 @@ namespace BrandUp.SBIS.ApiClient.CRM.Responses
         /// Целочисленный идентификатор регламента
         /// </summary>
         [JsonPropertyName("Регламент")]
-        public int ReglamentId { get; set; }
+        public int? ReglamentId { get; set; }
         /// <summary>
         /// Числовой идентификатор ответственного за сделку (сотрудник, подразделение, рабочая группа) или UUID-идентификатор сотрудника в сервисе профилей
         /// </summary>
@@ -18,7 +18,7 @@ namespace BrandUp.SBIS.ApiClient.CRM.Responses
         /// Идентификатор сделки в локальной схеме
         /// </summary>
         [JsonPropertyName("@Документ")]
-        public int Document { get; set; }
+        public int? Document { get; set; }
         /// <summary>
         /// UUID документа в ЭДО, с которым связана сделка
         /// </summary>
@@ -48,12 +48,12 @@ namespace BrandUp.SBIS.ApiClient.CRM.Responses
         /// Внешний канал, по которому создана сделка
         /// </summary>
         [JsonPropertyName("Источник")]
-        public int Source { get; set; }
+        public int? Source { get; set; }
         /// <summary>
         /// Целочисленный идентификатор списка клиентов для связи со сделкой
         /// </summary>
         [JsonPropertyName("Список")]
-        public int CustomerList { get; set; }
+        public int? CustomerList { get; set; }
         /// <summary>
         /// Признак отправки уведомлений. Значение по-умолчанию «false»
         /// </summary>

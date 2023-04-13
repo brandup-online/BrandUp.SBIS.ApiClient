@@ -1,18 +1,10 @@
-﻿using BrandUp.SBIS.ApiClient.CRM;
-using BrandUp.SBIS.ApiClient.CRM.Requests;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Xunit.Abstractions;
-
-namespace BrandUp.SBIS.ApiClient
+﻿namespace BrandUp.SBIS.ApiClient
 {
     public class CRMClientTest : TestBase
     {
         readonly CRMClient client;
-        readonly ITestOutputHelper output;
-        public CRMClientTest(ITestOutputHelper output)
+        public CRMClientTest()
         {
-            this.output = output ?? throw new ArgumentNullException(nameof(output));
             client = Services.GetRequiredService<CRMClient>();
         }
 
@@ -21,9 +13,9 @@ namespace BrandUp.SBIS.ApiClient
         {
             var response = await client.SaveCustomerAsync(new()
             {
-                Name = "Иван",
-                Surname = "Иванов",
-                Patronymic = "Иванович",
+                Name = "Василий",
+                Surname = "Васильев",
+                Patronymic = "Васильевич",
                 Gender = 0,
                 Address = "Адрес физического лица"
             },
@@ -58,7 +50,6 @@ namespace BrandUp.SBIS.ApiClient
             //Getting themes list 
             var themeResponse = await client.GetThemeListAsync(new() { }, CancellationToken.None);
             Assert.NotNull(themeResponse);
-            output.WriteLine(themeResponse);
 
             #endregion
 
@@ -83,14 +74,12 @@ namespace BrandUp.SBIS.ApiClient
             },
             CancellationToken.None);
             Assert.NotNull(response);
-            output.WriteLine(response);
         }
 
         [Fact]
         public async void Success_GetThemeList()
         {
             var response = await client.GetThemeListAsync(new() { }, CancellationToken.None);
-            output.WriteLine(response);
             Assert.NotNull(response);
         }
 
@@ -98,7 +87,6 @@ namespace BrandUp.SBIS.ApiClient
         public async void Success_GetThemeByName()
         {
             var response = await client.GetThemeByNameAsync(new() { ThemeName = "Продажа товаров и услуг" }, CancellationToken.None);
-            output.WriteLine(response);
             Assert.NotNull(response);
         }
 
@@ -107,7 +95,6 @@ namespace BrandUp.SBIS.ApiClient
         public async void Success_GetLeadStatus()
         {
             var response = await client.GetLeadStatusAsync(new() { DocumentId = Guid.Parse("37c3a18d-ac1e-4eb5-a1bd-89776aad46b2") }, CancellationToken.None);
-            output.WriteLine(response);
             Assert.NotNull(response);
         }
 

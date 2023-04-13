@@ -13,7 +13,7 @@ namespace BrandUp.SBIS.ApiClient.CRM.Responses
         /// Идентификатор документа в локальной схеме
         /// </summary>
         [JsonPropertyName("@Документ")]
-        public int LocalDocumentID { get; set; }
+        public int? LocalDocumentId { get; set; }
         /// <summary>
         /// Флаг, который определяет, что сделка новая или уже находится в обработке
         /// </summary>
@@ -38,7 +38,7 @@ namespace BrandUp.SBIS.ApiClient.CRM.Responses
         /// UUID пользователя, который создал последнее событие
         /// </summary>
         [JsonPropertyName("АвторКомментария")]
-        public string CommentAuthorUUID { get; set; }
+        public Guid CommentAuthorId { get; set; }
         /// <summary>
         /// Текст ошибки, если запрос не был выполнен
         /// </summary>

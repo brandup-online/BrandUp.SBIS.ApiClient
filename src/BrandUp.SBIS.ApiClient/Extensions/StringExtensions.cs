@@ -1,6 +1,6 @@
-﻿namespace BrandUp.SBIS.ApiClient.Extensions
+﻿namespace BrandUp.SBIS.ApiClient
 {
-    public static class StringExceptions
+    public static class StringExtensions
     {
         public static string ToCamelCase(this string value)
         {
