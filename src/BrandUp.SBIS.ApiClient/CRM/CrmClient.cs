@@ -33,24 +33,24 @@ namespace BrandUp.SBIS.ApiClient.CRM
 
         #region ICRMClient members
 
-        public Task<EventResponse> AddEventAsync(AddEventRequest request, CancellationToken cancellationToken)
+        public Task<AddEventResponse> AddEventAsync(AddEventRequest request, CancellationToken cancellationToken)
         {
-            return PostAsync<EventResponse, AddEventRequest>(request, cancellationToken);
+            return PostAsync<AddEventResponse, AddEventRequest>(request, cancellationToken);
         }
 
-        public Task<CustomerResponse> GetCustomerAsync(GetCustomerRequest request, CancellationToken cancellationToken)
+        public Task<GetCustomerResponse> GetCustomerAsync(GetCustomerRequest request, CancellationToken cancellationToken)
         {
-            return PostAsync<CustomerResponse, GetCustomerRequest>(request, cancellationToken);
+            return PostAsync<GetCustomerResponse, GetCustomerRequest>(request, cancellationToken);
         }
 
-        public Task<LeadInfoResponse> GetLeadStatusAsync(LeadStatusRequest request, CancellationToken cancellationToken)
+        public Task<LeadInfoResponse> GetLeadStatusAsync(LeadInfoRequest request, CancellationToken cancellationToken)
         {
-            return PostAsync<LeadInfoResponse, LeadStatusRequest>(request, cancellationToken);
+            return PostAsync<LeadInfoResponse, LeadInfoRequest>(request, cancellationToken);
         }
 
-        public Task<ThemeResponse> GetThemeByNameAsync(ThemeNameRequest request, CancellationToken cancellationToken)
+        public Task<ThemeResponse> GetThemeByNameAsync(ThemeRequest request, CancellationToken cancellationToken)
         {
-            return PostAsync<ThemeResponse, ThemeNameRequest>(request, cancellationToken);
+            return PostAsync<ThemeResponse, ThemeRequest>(request, cancellationToken);
         }
 
         public Task<ThemesListResponse> GetThemeListAsync(ThemeListRequest request, CancellationToken cancellationToken)
@@ -58,19 +58,19 @@ namespace BrandUp.SBIS.ApiClient.CRM
             return PostAsync<ThemesListResponse, ThemeListRequest>(request, cancellationToken);
         }
 
-        public Task<CreateLeadResponse> InsertRecordAsync(InsertRecordRequest request, CancellationToken cancellationToken)
+        public Task<CreateLeadResponse> InsertRecordAsync(CreateLeadRequest request, CancellationToken cancellationToken)
         {
-            return PostAsync<CreateLeadResponse, InsertRecordRequest>(request, cancellationToken);
+            return PostAsync<CreateLeadResponse, CreateLeadRequest>(request, cancellationToken);
         }
 
-        public Task<SaveCounterpartyResponse> SaveCounterpartyAsync(CounterpartyRequest request, CancellationToken cancellationToken)
+        public Task<CounterpartyResponse> SaveCounterpartyAsync(CounterpartyRequest request, CancellationToken cancellationToken)
         {
-            return PostAsync<SaveCounterpartyResponse, CounterpartyRequest>(request, cancellationToken);
+            return PostAsync<CounterpartyResponse, CounterpartyRequest>(request, cancellationToken);
         }
 
-        public Task<SaveClientResponse> SaveCustomerAsync(SaveCustomerRequest request, CancellationToken cancellationToken)
+        public Task<SaveCustomerResponse> SaveCustomerAsync(SaveCustomerRequest request, CancellationToken cancellationToken)
         {
-            return PostAsync<SaveClientResponse, SaveCustomerRequest>(request, cancellationToken);
+            return PostAsync<SaveCustomerResponse, SaveCustomerRequest>(request, cancellationToken);
         }
 
         #endregion
@@ -87,13 +87,13 @@ namespace BrandUp.SBIS.ApiClient.CRM
 
     public interface ICRMClient
     {
-        Task<CreateLeadResponse> InsertRecordAsync(InsertRecordRequest request, CancellationToken cancellationToken);
+        Task<CreateLeadResponse> InsertRecordAsync(CreateLeadRequest request, CancellationToken cancellationToken);
         Task<ThemesListResponse> GetThemeListAsync(ThemeListRequest request, CancellationToken cancellationToken);
-        Task<ThemeResponse> GetThemeByNameAsync(ThemeNameRequest request, CancellationToken cancellationToken);
-        Task<LeadInfoResponse> GetLeadStatusAsync(LeadStatusRequest request, CancellationToken cancellationToken);
-        Task<EventResponse> AddEventAsync(AddEventRequest request, CancellationToken cancellationToken);
-        Task<CustomerResponse> GetCustomerAsync(GetCustomerRequest request, CancellationToken cancellationToken);
-        Task<SaveClientResponse> SaveCustomerAsync(SaveCustomerRequest request, CancellationToken cancellationToken);
-        Task<SaveCounterpartyResponse> SaveCounterpartyAsync(CounterpartyRequest request, CancellationToken cancellationToken);
+        Task<ThemeResponse> GetThemeByNameAsync(ThemeRequest request, CancellationToken cancellationToken);
+        Task<LeadInfoResponse> GetLeadStatusAsync(LeadInfoRequest request, CancellationToken cancellationToken);
+        Task<AddEventResponse> AddEventAsync(AddEventRequest request, CancellationToken cancellationToken);
+        Task<GetCustomerResponse> GetCustomerAsync(GetCustomerRequest request, CancellationToken cancellationToken);
+        Task<SaveCustomerResponse> SaveCustomerAsync(SaveCustomerRequest request, CancellationToken cancellationToken);
+        Task<CounterpartyResponse> SaveCounterpartyAsync(CounterpartyRequest request, CancellationToken cancellationToken);
     }
 }

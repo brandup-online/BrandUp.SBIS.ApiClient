@@ -1,4 +1,4 @@
-﻿using BrandUp.SBIS.ApiClient.CRM.Attributes;
+﻿using BrandUp.SBIS.ApiClient.Base.Attributes;
 using System.Collections;
 using System.Reflection;
 using System.Text;
@@ -10,23 +10,31 @@ namespace BrandUp.SBIS.ApiClient.CRM.Serialization
 {
     internal class CrmSerializer
     {
-        static CrmSerializer()
-        {
-            options.Converters.Add(new DateTimeConverter());
-        }
         readonly static JsonSerializerOptions options = new()
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         };
-
         readonly static Encoding encoding = Encoding.GetEncoding("windows-1251");
+
+        static CrmSerializer()
+        {
+            options.Converters.Add(new DateTimeConverter());
+        }
 
         public static Task<Stream> SerializeAsync<T>(T content, CancellationToken cancellationToken)
              => SerializeAsync(content, typeof(T), cancellationToken);
 
-        public static async Task<Stream> SerializeAsync(object content, Type contentType, CancellationToken cancellationToken)
+        public static Task<Stream> SerializeAsync(object content, Type contentType, CancellationToken cancellationToken)
         {
-            var body = CreateBody(content, contentType);
+            if (content == null)
+                throw new ArgumentNullException(nameof(content));
+            if (contentType == null)
+                throw new ArgumentNullException(nameof(contentType));
+
+            if (cancellationToken.IsCancellationRequested)
+                throw new TaskCanceledException();
+
+            var body = SerializeBody(content, contentType);
 
             //var body = JsonNode.Parse("{\"НаименованиеТемы\": \"Пример_названия\"}");
 
@@ -36,10 +44,9 @@ namespace BrandUp.SBIS.ApiClient.CRM.Serialization
             body.WriteTo(writer);
 
             writer.Flush();
-            await ms.FlushAsync(cancellationToken);
             ms.Seek(0, SeekOrigin.Begin);
 
-            return ms;
+            return Task.FromResult<Stream>(ms);
         }
 
         public static async Task<T> DeserializeAsync<T>(Stream content, CancellationToken cancellationToken)
@@ -47,16 +54,41 @@ namespace BrandUp.SBIS.ApiClient.CRM.Serialization
 
         public static async Task<object> DeserializeAsync(Stream content, Type contentType, CancellationToken cancellationToken)
         {
+            if (content == null)
+                throw new ArgumentNullException(nameof(content));
+            if (contentType == null)
+                throw new ArgumentNullException(nameof(contentType));
+
             using var reader = new StreamReader(content, encoding);
             var data = await reader.ReadToEndAsync(cancellationToken);
             var json = JsonNode.Parse(data);
 
+            if (!IsValid(json))
+                throw new NotSupportedException();
+
             return DeserializeToObject(json.AsObject(), contentType);
         }
 
+        private static bool IsValid(JsonNode json)
+        {
+            if (json == null)
+                return false;
+            if (json["result"] == null)
+                return false;
+            var root = json["result"];
+
+            if (root is JsonValue)
+                return true;
+            if (root["d"] == null && root["s"] == null)
+                return false;
+
+            return true;
+        }
+
+
         #region Serialization helpers
 
-        static JsonObject CreateBody(object content, Type contentType)
+        static JsonObject SerializeBody(object content, Type contentType)
         {
             var attribute = contentType.GetCustomAttribute<RpcCommandInfoAttribute>();
 
@@ -154,11 +186,11 @@ namespace BrandUp.SBIS.ApiClient.CRM.Serialization
             {
                 FromValue(value, ref instance);
             }
-            else if (result["d"] is JsonArray)
+            else if (result is JsonArray)
             {
                 FromArray(result, ref instance);
             }
-            else if (result["d"] is JsonObject obj)
+            else if (result is JsonObject obj)
             {
                 FromObject(obj, ref instance);
             }
@@ -170,42 +202,60 @@ namespace BrandUp.SBIS.ApiClient.CRM.Serialization
         private static void FromArray(JsonNode node, ref object instance)
         {
             var type = instance.GetType();
+            var signatures = node["s"]?.AsArray() ?? throw new ArgumentException(null, nameof(node));
 
-            foreach (var responses in node["d"].AsArray())
+            if (type.GetProperties().Length == 1)
             {
-                var definitions = responses as JsonArray ?? throw new ArgumentException(null, nameof(node));
-                var signatures = node["s"]?.AsArray() ?? throw new ArgumentException(null, nameof(node));
-
-                var array = definitions.Zip(signatures, (d, s) => new { Value = d, Signature = s });
-
-                foreach (var record in array)
+                var listType = type.GetProperties()[0].PropertyType;
+                if (listType.IsAssignableTo(typeof(IList)))
                 {
-                    var propertyName = record.Signature["n"].AsValue().GetValue<string>();
-                    var prop = GetPropertyByName(propertyName, type) ?? throw new Exception($"Unknown key: {propertyName}");
-                    if (record.Value is JsonValue value)
+                    var listInstance = (IList)CreateInstance(listType);
+                    var genericType = listType.GenericTypeArguments.First();
+
+                    foreach (var responses in node["d"].AsArray())
                     {
-                        prop.SetValue(instance, value.Deserialize(prop.PropertyType, options));
-                    }
-                    else if (record.Value is JsonObject obj)
-                    {
-                        var innerObject = prop.PropertyType.GetConstructor(Type.EmptyTypes).Invoke(null);
-                        FromObject(obj["d"].AsObject(), ref innerObject);
-                        prop.SetValue(instance, innerObject);
+                        var definitions = responses as JsonArray ?? throw new ArgumentException(null, nameof(node));
+                        var innerInstance = CreateInstance(genericType);
+                        DeserializeArrayNode(definitions, signatures, ref innerInstance);
+                        listInstance.Add(innerInstance);
                     }
                 }
             }
+            else
+                DeserializeArrayNode(node["d"].AsArray().First().AsArray(), signatures, ref instance);
         }
 
         private static void FromObject(JsonObject obj, ref object instance)
-        {
-            instance = obj.Deserialize(instance.GetType(), options);
-        }
+            => instance = obj["d"].Deserialize(instance.GetType(), options);
 
         private static void FromValue(JsonValue value, ref object instance)
         {
             var property = instance.GetType().GetProperties().Single();
 
             property.SetValue(instance, value.Deserialize(property.PropertyType));
+        }
+
+        static void DeserializeArrayNode(JsonArray definitionArray, JsonArray signaturesArray, ref object instance)
+        {
+            var type = instance.GetType();
+
+            var array = definitionArray.Zip(signaturesArray, (d, s) => new { Value = d, Signature = s });
+
+            foreach (var record in array)
+            {
+                var propertyName = record.Signature["n"].AsValue().GetValue<string>();
+                var prop = GetPropertyByName(propertyName, type) ?? throw new Exception($"Unknown key: {propertyName}");
+                if (record.Value is JsonValue value)
+                {
+                    prop.SetValue(instance, value.Deserialize(prop.PropertyType, options));
+                }
+                else if (record.Value is JsonObject obj)
+                {
+                    var innerObject = prop.PropertyType.GetConstructor(Type.EmptyTypes).Invoke(null);
+                    FromObject(obj["d"].AsObject(), ref innerObject);
+                    prop.SetValue(instance, innerObject);
+                }
+            }
         }
 
         static object CreateInstance(Type objectType)
@@ -225,23 +275,6 @@ namespace BrandUp.SBIS.ApiClient.CRM.Serialization
             return null;
         }
 
-        #endregion
-
-        #region Common helpers
-
-        static string Name(MemberInfo member)
-        {
-            var propertyName = member.GetCustomAttribute<JsonPropertyNameAttribute>();
-
-            return propertyName?.Name ?? member.Name;
-        }
-
-        static bool IsNullable(Type type)
-        {
-            return Nullable.GetUnderlyingType(type) != null;
-        }
-
-
         static JsonObject CreateJsonObject(string rootName)
         {
             if (rootName == null)
@@ -260,6 +293,23 @@ namespace BrandUp.SBIS.ApiClient.CRM.Serialization
                 ["s"] = new JsonObject()
             };
         }
+
+        #endregion
+
+        #region Common helpers
+
+        static string Name(MemberInfo member)
+        {
+            var propertyName = member.GetCustomAttribute<JsonPropertyNameAttribute>();
+
+            return propertyName?.Name ?? member.Name;
+        }
+
+        static bool IsNullable(Type type)
+        {
+            return Nullable.GetUnderlyingType(type) != null;
+        }
+
         #endregion
     }
 }

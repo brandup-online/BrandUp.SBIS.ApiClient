@@ -1,4 +1,4 @@
-﻿using BrandUp.SBIS.ApiClient.CRM.Attributes;
+﻿using BrandUp.SBIS.ApiClient.Base.Attributes;
 using System.Text.Json.Serialization;
 
 namespace BrandUp.SBIS.ApiClient.CRM.Requests
@@ -7,7 +7,7 @@ namespace BrandUp.SBIS.ApiClient.CRM.Requests
     public class AddEventRequest
     {
         /// <summary>
-        /// Возвращает тип события. Возможные значения: «3» — CRM и «4» — ответ на онлайн-форму
+        /// Обязательный параметр. Возвращает тип события. Возможные значения: «3» — CRM и «4» — ответ на онлайн-форму
         /// </summary>
         public int EventType { get; set; }
 

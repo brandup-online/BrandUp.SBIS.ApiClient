@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -12,9 +13,9 @@ namespace BrandUp.SBIS.ApiClient.CRM.Serialization
             {
                 var str = Encoding.UTF8.GetString(reader.ValueSpan);
                 str = str.Replace("\\u002B", "+");
-                if (!DateTime.TryParseExact(str, "yyyy-MM-dd hh:mm:ss.ffffffzz", null, System.Globalization.DateTimeStyles.AdjustToUniversal, out dateTime))
+                if (!DateTime.TryParseExact(str, "yyyy-MM-dd hh:mm:ss.ffffffzz", null, DateTimeStyles.AdjustToUniversal, out dateTime))
                 {
-                    dateTime = new DateTime();
+                    throw new NotSupportedException();
                 }
             }
             return dateTime;

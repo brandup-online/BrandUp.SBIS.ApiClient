@@ -39,7 +39,6 @@ namespace BrandUp.SBIS.ApiClient
             //output.WriteLine(response);
         }
 
-
         [Fact]
         public async void Success_CreateLead()
         {
@@ -95,7 +94,6 @@ namespace BrandUp.SBIS.ApiClient
             Assert.NotNull(response);
         }
 
-
         [Fact]
         public async void Success_GetLeadStatus()
         {
@@ -103,11 +101,10 @@ namespace BrandUp.SBIS.ApiClient
             Assert.NotNull(response);
         }
 
-
         [Fact]
         public async void Success_AddEvent()
         {
-            var response = await client.AddEventAsync(new() { EventType = 3, LeadID = 1200, KindOfContact = 1, ContactType = 0, Comment = "Тестовое событие", Date = DateTime.UtcNow.AddDays(1) }, CancellationToken.None);
+            var response = await client.AddEventAsync(new() { EventType = 3, LeadID = 1200, KindOfContact = 1, Comment = "Тестовое событие", Date = DateTime.UtcNow.AddDays(1) }, CancellationToken.None);
             //output.WriteLine(response);
             Assert.NotNull(response);
         }

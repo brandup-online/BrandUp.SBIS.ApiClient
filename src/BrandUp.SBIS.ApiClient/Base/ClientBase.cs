@@ -18,8 +18,7 @@ namespace BrandUp.SBIS.ApiClient.Base
         readonly Credentials credentials;
         readonly protected ILogger logger;
 
-        string accessKey;
-        protected bool IsAuthorize => accessKey != null;
+        protected bool IsAuthorize { get; private set; } = false;
 
         public ClientBase(HttpClient httpClient, Credentials credentials, ILogger logger)
         {
@@ -32,16 +31,17 @@ namespace BrandUp.SBIS.ApiClient.Base
 
         #region Abstract members
 
-        protected virtual HttpRequestMessage ToGetRequest(string endpoint, object parmeters)
+        protected virtual HttpRequestMessage ToGetRequest(string endpoint, object request)
         {
             if (endpoint == null)
                 throw new ArgumentNullException(nameof(endpoint));
-            if (parmeters == null)
+            if (request == null)
                 return new(HttpMethod.Get, endpoint);
-            List<string> pairs = new();
-            foreach (var prop in parmeters.GetType().GetProperties())
+
+            List<string> parameters = new();
+            foreach (var prop in request.GetType().GetProperties())
             {
-                var value = prop.GetValue(parmeters, null);
+                var value = prop.GetValue(request, null);
                 if (value == null)
                     continue;
 
@@ -61,17 +61,17 @@ namespace BrandUp.SBIS.ApiClient.Base
                     if (sb.Length == 1)
                         continue;
 
-                    pairs.Add($"{prop.Name.ToCamelCase()}={sb}");
+                    parameters.Add($"{prop.Name.ToCamelCase()}={sb}");
                 }
                 else if (value is DateTime dateTime)
-                    pairs.Add($"{prop.Name.ToCamelCase()}={dateTime:yyyy-MM-dd}");
+                    parameters.Add($"{prop.Name.ToCamelCase()}={dateTime:yyyy-MM-dd}");
                 else if (value is DateOnly date)
-                    pairs.Add($"{prop.Name.ToCamelCase()}={date:yyyy-MM-dd}");
+                    parameters.Add($"{prop.Name.ToCamelCase()}={date:yyyy-MM-dd}");
                 else
-                    pairs.Add($"{prop.Name.ToCamelCase()}={value.ToString().ToLower()}");
+                    parameters.Add($"{prop.Name.ToCamelCase()}={value.ToString().ToLower()}");
             }
-            var parameters = string.Join("&", pairs);
-            return new(HttpMethod.Get, string.Join("?", endpoint, parameters));
+            var lineParameters = string.Join("&", parameters);
+            return new(HttpMethod.Get, string.Join("?", endpoint, lineParameters));
         }
 
         protected virtual HttpRequestMessage ToJsonRpcRequest<T>(T content)
@@ -127,10 +127,11 @@ namespace BrandUp.SBIS.ApiClient.Base
             var response = await httpClient.SendAsync(httpRequest, cancellationToken);
 
             var auth = await response.Content.ReadFromJsonAsync<AuthResponse>(options, cancellationToken);
-            accessKey = auth.AccessToken;
 
-            httpClient.DefaultRequestHeaders.Add("X-SBISAccessToken", accessKey);
+            //httpClient.DefaultRequestHeaders.Add("X-SBISAccessToken", auth.AccessToken);
             httpClient.DefaultRequestHeaders.Add("X-SBISSessionId", auth.Sid);
+
+            IsAuthorize = true;
         }
 
         #endregion

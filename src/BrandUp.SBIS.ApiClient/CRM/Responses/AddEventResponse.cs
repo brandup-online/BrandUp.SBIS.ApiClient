@@ -1,6 +1,6 @@
 ﻿namespace BrandUp.SBIS.ApiClient.CRM.Responses
 {
-    public class EventResponse
+    public class AddEventResponse
     {
         public int EventId { get; set; }
         ///// <summary>

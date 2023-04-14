@@ -4,6 +4,11 @@ namespace BrandUp.SBIS.ApiClient.CRM.Responses
 {
     public class ThemesListResponse
     {
+        public List<Theme> Themes { get; set; }
+    }
+
+    public class Theme
+    {
         [JsonPropertyName("Идентификатор")]
         public Guid Id { get; set; }
         [JsonPropertyName("@Регламент")]

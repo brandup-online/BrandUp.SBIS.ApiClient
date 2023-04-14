@@ -1,4 +1,4 @@
-﻿namespace BrandUp.SBIS.ApiClient.CRM.Attributes
+﻿namespace BrandUp.SBIS.ApiClient.Base.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
     internal class RpcCommandInfoAttribute : Attribute

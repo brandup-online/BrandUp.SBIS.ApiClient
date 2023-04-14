@@ -1,6 +1,6 @@
 ﻿namespace BrandUp.SBIS.ApiClient.CRM.Responses
 {
-    public class SaveCounterpartyResponse
+    public class CounterpartyResponse
     {
         public int CounterpartyId { get; set; }
     }

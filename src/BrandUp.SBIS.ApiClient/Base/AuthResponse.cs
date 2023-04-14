@@ -13,6 +13,9 @@ namespace BrandUp.SBIS.ApiClient.Base
         /// Идентификатор сессии, в которой запрашивается доступ
         /// </summary>
         public string Sid { get; set; }
+        /// <summary>
+        /// Токен доступа внешнего приложения
+        /// </summary>
         public string Token { get; set; }
     }
 }
