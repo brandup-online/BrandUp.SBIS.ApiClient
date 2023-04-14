@@ -49,10 +49,7 @@ namespace BrandUp.SBIS.ApiClient.CRM.Serialization
         {
             using var reader = new StreamReader(content, encoding);
             var data = await reader.ReadToEndAsync(cancellationToken);
-            var bytes = encoding.GetBytes(data);
-            var utf8Bytes = Encoding.Convert(encoding, Encoding.Unicode, bytes);
-            var utfString = Encoding.Unicode.GetString(utf8Bytes);
-            var json = JsonNode.Parse(utfString);
+            var json = JsonNode.Parse(data);
 
             return DeserializeToObject(json.AsObject(), contentType);
         }
@@ -174,24 +171,27 @@ namespace BrandUp.SBIS.ApiClient.CRM.Serialization
         {
             var type = instance.GetType();
 
-            var definitions = node["d"].AsArray().First() as JsonArray ?? throw new ArgumentException(null, nameof(node));
-            var signatures = node["s"]?.AsArray() ?? throw new ArgumentException(null, nameof(node));
-
-            var array = definitions.Zip(signatures, (d, s) => new { Value = d, Signature = s });
-
-            foreach (var record in array)
+            foreach (var responses in node["d"].AsArray())
             {
-                var propertyName = record.Signature["n"].AsValue().GetValue<string>();
-                var prop = GetPropertyByName(propertyName, type) ?? throw new Exception($"Unknown key: {propertyName}");
-                if (record.Value is JsonValue value)
+                var definitions = responses as JsonArray ?? throw new ArgumentException(null, nameof(node));
+                var signatures = node["s"]?.AsArray() ?? throw new ArgumentException(null, nameof(node));
+
+                var array = definitions.Zip(signatures, (d, s) => new { Value = d, Signature = s });
+
+                foreach (var record in array)
                 {
-                    prop.SetValue(instance, value.Deserialize(prop.PropertyType, options));
-                }
-                else if (record.Value is JsonObject obj)
-                {
-                    var innerObject = prop.PropertyType.GetConstructor(Type.EmptyTypes).Invoke(null);
-                    FromObject(obj["d"].AsObject(), ref innerObject);
-                    prop.SetValue(instance, innerObject);
+                    var propertyName = record.Signature["n"].AsValue().GetValue<string>();
+                    var prop = GetPropertyByName(propertyName, type) ?? throw new Exception($"Unknown key: {propertyName}");
+                    if (record.Value is JsonValue value)
+                    {
+                        prop.SetValue(instance, value.Deserialize(prop.PropertyType, options));
+                    }
+                    else if (record.Value is JsonObject obj)
+                    {
+                        var innerObject = prop.PropertyType.GetConstructor(Type.EmptyTypes).Invoke(null);
+                        FromObject(obj["d"].AsObject(), ref innerObject);
+                        prop.SetValue(instance, innerObject);
+                    }
                 }
             }
         }

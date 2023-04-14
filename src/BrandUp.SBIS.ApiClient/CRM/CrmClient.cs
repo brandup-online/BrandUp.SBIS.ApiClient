@@ -1,4 +1,11 @@
-﻿namespace BrandUp.SBIS.ApiClient.CRM
+﻿using BrandUp.SBIS.ApiClient.Base;
+using BrandUp.SBIS.ApiClient.CRM.Requests;
+using BrandUp.SBIS.ApiClient.CRM.Responses;
+using BrandUp.SBIS.ApiClient.CRM.Serialization;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+namespace BrandUp.SBIS.ApiClient.CRM
 {
     public class CRMClient : ClientBase, ICRMClient
     {
@@ -36,9 +43,9 @@
             return PostAsync<CustomerResponse, GetCustomerRequest>(request, cancellationToken);
         }
 
-        public Task<string> GetLeadStatusAsync(LeadStatusRequest request, CancellationToken cancellationToken)
+        public Task<LeadInfoResponse> GetLeadStatusAsync(LeadStatusRequest request, CancellationToken cancellationToken)
         {
-            return PostAsync<string, LeadStatusRequest>(request, cancellationToken);
+            return PostAsync<LeadInfoResponse, LeadStatusRequest>(request, cancellationToken);
         }
 
         public Task<ThemeResponse> GetThemeByNameAsync(ThemeNameRequest request, CancellationToken cancellationToken)

@@ -1,4 +1,9 @@
-﻿namespace BrandUp.SBIS.ApiClient
+﻿using BrandUp.SBIS.ApiClient.CRM;
+using BrandUp.SBIS.ApiClient.CRM.Requests;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace BrandUp.SBIS.ApiClient
 {
     public class CRMClientTest : TestBase
     {

@@ -1,7 +1,7 @@
 ﻿using BrandUp.SBIS.ApiClient.CRM.Attributes;
 using System.Text.Json.Serialization;
 
-namespace BrandUp.SBIS.ApiClient.CRM
+namespace BrandUp.SBIS.ApiClient.CRM.Requests
 {
     [RpcCommandInfo(RootName = "EventData", Command = "CRMEvent.AddEvent")]
     public class AddEventRequest
