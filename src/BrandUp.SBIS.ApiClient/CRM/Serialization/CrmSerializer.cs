@@ -1,4 +1,5 @@
-﻿using BrandUp.SBIS.ApiClient.Base.Attributes;
+﻿using BrandUp.SBIS.ApiClient.Base;
+using BrandUp.SBIS.ApiClient.CRM.Attributes;
 using System.Collections;
 using System.Reflection;
 using System.Text;
@@ -8,7 +9,7 @@ using System.Text.Json.Serialization;
 
 namespace BrandUp.SBIS.ApiClient.CRM.Serialization
 {
-    internal class CrmSerializer
+    internal class CrmSerializer : ISerializer
     {
         readonly static JsonSerializerOptions options = new()
         {
@@ -21,7 +22,7 @@ namespace BrandUp.SBIS.ApiClient.CRM.Serialization
             options.Converters.Add(new DateTimeConverter());
         }
 
-        public static Task<Stream> SerializeAsync<T>(T content, CancellationToken cancellationToken)
+        public Task<Stream> SerializeAsync<T>(T content, CancellationToken cancellationToken)
              => SerializeAsync(content, typeof(T), cancellationToken);
 
         public static Task<Stream> SerializeAsync(object content, Type contentType, CancellationToken cancellationToken)
@@ -49,7 +50,7 @@ namespace BrandUp.SBIS.ApiClient.CRM.Serialization
             return Task.FromResult<Stream>(ms);
         }
 
-        public static async Task<T> DeserializeAsync<T>(Stream content, CancellationToken cancellationToken)
+        public async Task<T> DeserializeAsync<T>(Stream content, CancellationToken cancellationToken)
         => (T)(await DeserializeAsync(content, typeof(T), cancellationToken));
 
         public static async Task<object> DeserializeAsync(Stream content, Type contentType, CancellationToken cancellationToken)
@@ -90,19 +91,25 @@ namespace BrandUp.SBIS.ApiClient.CRM.Serialization
 
         static JsonObject SerializeBody(object content, Type contentType)
         {
-            var attribute = contentType.GetCustomAttribute<RpcCommandInfoAttribute>();
+            var attribute = contentType.GetCustomAttribute<CrmRpcCommandInfoAttribute>();
+            if (attribute == null)
+                return null;
 
             return new JsonObject
             {
                 ["jsonrpc"] = "2.0",
                 ["method"] = attribute.Command,
-                ["params"] = SerializeObject(attribute.RootName, contentType.GetProperties(), content)
+                ["params"] = SerializeObject(attribute.RootName, contentType.GetProperties(), attribute.WithOptions, content)
             };
         }
 
-        static JsonObject SerializeObject(string rootName, PropertyInfo[] properties, object content)
+        static JsonObject SerializeObject(string rootName, PropertyInfo[] properties, bool optionsFlag, object content)
         {
             var json = CreateJsonObject(rootName);
+
+            if (optionsFlag)
+                json.Add("options", null);
+
             JsonNode rootNode = json;
             if (rootName != null)
                 rootNode = json[rootName];
@@ -165,7 +172,7 @@ namespace BrandUp.SBIS.ApiClient.CRM.Serialization
             if (!type.IsSerializable)
             {
                 var dataObj = property.GetValue(content);
-                var node = SerializeObject(null, property.PropertyType.GetProperties(), dataObj);
+                var node = SerializeObject(null, property.PropertyType.GetProperties(), false, dataObj);
 
                 return (node, "Запись");
             }
@@ -186,11 +193,11 @@ namespace BrandUp.SBIS.ApiClient.CRM.Serialization
             {
                 FromValue(value, ref instance);
             }
-            else if (result is JsonArray)
+            else if (result["d"] is JsonArray)
             {
                 FromArray(result, ref instance);
             }
-            else if (result is JsonObject obj)
+            else if (result["d"] is JsonObject obj)
             {
                 FromObject(obj, ref instance);
             }
@@ -219,6 +226,7 @@ namespace BrandUp.SBIS.ApiClient.CRM.Serialization
                         DeserializeArrayNode(definitions, signatures, ref innerInstance);
                         listInstance.Add(innerInstance);
                     }
+                    type.GetProperties().First().SetValue(instance, listInstance);
                 }
             }
             else
@@ -226,7 +234,7 @@ namespace BrandUp.SBIS.ApiClient.CRM.Serialization
         }
 
         private static void FromObject(JsonObject obj, ref object instance)
-            => instance = obj["d"].Deserialize(instance.GetType(), options);
+            => instance = obj.Deserialize(instance.GetType(), options);
 
         private static void FromValue(JsonValue value, ref object instance)
         {

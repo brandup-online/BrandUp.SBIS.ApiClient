@@ -1,9 +1,9 @@
-﻿using BrandUp.SBIS.ApiClient.Base.Attributes;
+﻿using BrandUp.SBIS.ApiClient.CRM.Attributes;
 using System.Text.Json.Serialization;
 
 namespace BrandUp.SBIS.ApiClient.CRM.Requests
 {
-    [RpcCommandInfo(Command = "CRMLead.getCRMThemeByName")]
+    [CrmRpcCommandInfo(Command = "CRMLead.getCRMThemeByName")]
     public class ThemeRequest
     {
         /// <summary>

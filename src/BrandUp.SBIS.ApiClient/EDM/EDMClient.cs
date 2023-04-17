@@ -1,11 +1,18 @@
 ﻿using BrandUp.SBIS.ApiClient.Base;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 namespace BrandUp.SBIS.ApiClient.EDM
 {
     public class EDMClient : ClientBase, IEDMClient
     {
+        internal override ISerializer Serializer => new EDMSerializer(new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        });
+
         public EDMClient(HttpClient httpClient, IOptions<Credentials> credentials, ILogger<EDMClient> logger) : base(httpClient, credentials.Value, logger)
         {
         }

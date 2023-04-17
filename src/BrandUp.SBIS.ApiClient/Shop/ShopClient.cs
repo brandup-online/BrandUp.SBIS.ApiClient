@@ -3,11 +3,18 @@ using BrandUp.SBIS.ApiClient.Shop.Requests;
 using BrandUp.SBIS.ApiClient.Shop.Responses;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 namespace BrandUp.SBIS.ApiClient.Clients
 {
     public class ShopClient : ClientBase, IShopClient
     {
+        internal override ISerializer Serializer => new DefaultSerializer(new()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        });
+
         public ShopClient(HttpClient httpClient, ILogger<ShopClient> logger, IOptions<Credentials> credentials) : base(httpClient, credentials.Value, logger) { }
 
 

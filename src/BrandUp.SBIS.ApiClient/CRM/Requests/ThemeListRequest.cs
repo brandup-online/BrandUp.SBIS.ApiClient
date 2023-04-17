@@ -1,8 +1,8 @@
-﻿using BrandUp.SBIS.ApiClient.Base.Attributes;
+﻿using BrandUp.SBIS.ApiClient.CRM.Attributes;
 
 namespace BrandUp.SBIS.ApiClient.CRM.Requests
 {
-    [RpcCommandInfo(Command = "CRMTheme.GetList", RootName = "Param")]
+    [CrmRpcCommandInfo(Command = "CRMTheme.GetList", RootName = "Param")]
     public class ThemeListRequest
     {
         /// <summary>

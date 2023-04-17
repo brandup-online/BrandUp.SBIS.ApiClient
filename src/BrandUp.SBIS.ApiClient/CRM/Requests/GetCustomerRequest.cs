@@ -1,9 +1,9 @@
-﻿using BrandUp.SBIS.ApiClient.Base.Attributes;
+﻿using BrandUp.SBIS.ApiClient.CRM.Attributes;
 using System.Text.Json.Serialization;
 
 namespace BrandUp.SBIS.ApiClient.CRM.Requests
 {
-    [RpcCommandInfo(RootName = "client_data", Command = "CRMClients.GetCustomerByParams")]
+    [CrmRpcCommandInfo(RootName = "client_data", Command = "CRMClients.GetCustomerByParams", WithOptions = true)]
     public class GetCustomerRequest
     {
         /// <summary>

@@ -1,9 +1,9 @@
-﻿using BrandUp.SBIS.ApiClient.Base.Attributes;
+﻿using BrandUp.SBIS.ApiClient.CRM.Attributes;
 using System.Text.Json.Serialization;
 
 namespace BrandUp.SBIS.ApiClient.CRM.Requests
 {
-    [RpcCommandInfo(Command = "CRMLead.insertRecord", RootName = "Лид")]
+    [CrmRpcCommandInfo(Command = "CRMLead.insertRecord", RootName = "Лид")]
     public class CreateLeadRequest
     {
         /// <summary>

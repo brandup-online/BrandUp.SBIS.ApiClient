@@ -18,12 +18,12 @@ namespace BrandUp.SBIS.ApiClient.CRM.Responses
         /// Флаг, который определяет, что сделка новая или уже находится в обработке
         /// </summary>
         [JsonPropertyName("Активность")]
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
         /// <summary>
         /// Результат, с которым завершилась обработка сделки
         /// </summary>
         [JsonPropertyName("Результат")]
-        public bool ProcessingResult { get; set; }
+        public bool? ProcessingResult { get; set; }
         /// <summary>
         /// Комментарий из последнего события по сделке, либо комментарий из самой сделки
         /// </summary>

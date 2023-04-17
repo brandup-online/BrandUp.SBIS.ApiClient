@@ -90,14 +90,14 @@ namespace BrandUp.SBIS.ApiClient
         [Fact]
         public async void Success_GetThemeByName()
         {
-            var response = await client.GetThemeByNameAsync(new() { ThemeName = "Продажа товаров и услуг" }, CancellationToken.None);
+            var response = await client.GetThemeByNameAsync("Продажа товаров и услуг", CancellationToken.None);
             Assert.NotNull(response);
         }
 
         [Fact]
         public async void Success_GetLeadStatus()
         {
-            var response = await client.GetLeadStatusAsync(new() { DocumentId = Guid.Parse("37c3a18d-ac1e-4eb5-a1bd-89776aad46b2") }, CancellationToken.None);
+            var response = await client.GetLeadStatusAsync(Guid.Parse("37c3a18d-ac1e-4eb5-a1bd-89776aad46b2"), CancellationToken.None);
             Assert.NotNull(response);
         }
 

@@ -8,19 +8,15 @@ namespace BrandUp.SBIS.ApiClient.Base
 {
     public abstract class ClientBase
     {
-        readonly static protected JsonSerializerOptions options = new()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-        };
-
         readonly HttpClient httpClient;
         readonly Credentials credentials;
         readonly protected ILogger logger;
 
+        internal abstract ISerializer Serializer { get; }
+
         protected bool IsAuthorize { get; private set; } = false;
 
-        public ClientBase(HttpClient httpClient, Credentials credentials, ILogger logger)
+        internal ClientBase(HttpClient httpClient, Credentials credentials, ILogger logger)
         {
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             this.credentials = credentials ?? throw new ArgumentNullException(nameof(credentials));
@@ -76,12 +72,15 @@ namespace BrandUp.SBIS.ApiClient.Base
 
         protected virtual HttpRequestMessage ToJsonRpcRequest<T>(T content)
         {
-            return new HttpRequestMessage(HttpMethod.Post, string.Empty);
+            return new HttpRequestMessage(HttpMethod.Post, string.Empty)
+            {
+                Content = new JsonRpcContent<T>(content, Serializer)
+            };
         }
 
-        protected virtual Task<T> DeserializeResponseAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken)
+        protected virtual async Task<T> DeserializeResponseAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken)
         {
-            return response.Content.ReadFromJsonAsync<T>(options, cancellationToken);
+            return await Serializer.DeserializeAsync<T>(await response.Content.ReadAsStreamAsync(cancellationToken), cancellationToken);
         }
 
         #endregion
@@ -97,6 +96,7 @@ namespace BrandUp.SBIS.ApiClient.Base
 
             if (typeof(T) == typeof(string))
                 return (T)(object)await response.Content.ReadAsStringAsync(cancellationToken);
+
 
             if (!response.IsSuccessStatusCode)
                 return default;
@@ -118,6 +118,12 @@ namespace BrandUp.SBIS.ApiClient.Base
 
         protected async Task AuthorizationAsync(CancellationToken cancellationToken)
         {
+            JsonSerializerOptions options = new()
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            };
+
             var request = new Uri("https://online.sbis.ru/oauth/service/", UriKind.Absolute);
 
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, request)

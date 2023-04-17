@@ -4,32 +4,17 @@ using BrandUp.SBIS.ApiClient.CRM.Responses;
 using BrandUp.SBIS.ApiClient.CRM.Serialization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace BrandUp.SBIS.ApiClient.CRM
 {
     public class CRMClient : ClientBase, ICRMClient
     {
+        internal override ISerializer Serializer => new CrmSerializer();
+
         public CRMClient(HttpClient httpClient, ILogger<CRMClient> logger, IOptions<Credentials> credentials) : base(httpClient, credentials.Value, logger)
         { }
-
-        #region Virtual members
-
-        protected override HttpRequestMessage ToJsonRpcRequest<T>(T content)
-        {
-            var message = new HttpRequestMessage(HttpMethod.Post, (Uri)null)
-            {
-                Content = CrmJsonRpcContent.Create(content)
-            };
-
-            return message;
-        }
-
-        protected override async Task<T> DeserializeResponseAsync<T>(HttpResponseMessage response, CancellationToken cancellationToken)
-        {
-            return await CrmSerializer.DeserializeAsync<T>(await response.Content.ReadAsStreamAsync(cancellationToken), cancellationToken);
-        }
-
-        #endregion
 
         #region ICRMClient members
 
@@ -43,14 +28,29 @@ namespace BrandUp.SBIS.ApiClient.CRM
             return PostAsync<GetCustomerResponse, GetCustomerRequest>(request, cancellationToken);
         }
 
-        public Task<LeadInfoResponse> GetLeadStatusAsync(LeadInfoRequest request, CancellationToken cancellationToken)
+        public Task<LeadInfoResponse> GetLeadStatusAsync(Guid LeadId, CancellationToken cancellationToken)
         {
-            return PostAsync<LeadInfoResponse, LeadInfoRequest>(request, cancellationToken);
+
+            var jsonString = "{\"jsonrpc\": \"2.0\", \"method\" : \"CRMLead.getLeadStatus\", \"params\" :{ \"ИдентификаторДокумента\" : \"" + LeadId.ToString() + "\"}}";
+
+            var request = new HttpRequestMessage(HttpMethod.Post, (Uri)null)
+            {
+                Content = new StringContent(jsonString, Encoding.GetEncoding("windows-1251"), MediaTypeHeaderValue.Parse("application/json-rpc"))
+            };
+
+            return ExecuteAsync<LeadInfoResponse>(request, cancellationToken);
         }
 
-        public Task<ThemeResponse> GetThemeByNameAsync(ThemeRequest request, CancellationToken cancellationToken)
+        public Task<ThemeResponse> GetThemeByNameAsync(string Name, CancellationToken cancellationToken)
         {
-            return PostAsync<ThemeResponse, ThemeRequest>(request, cancellationToken);
+            var jsonString = "{\"jsonrpc\": \"2.0\", \"method\" : \"CRMLead.getCRMThemeByName\", \"params\" :{ \"НаименованиеТемы\" : \"" + Name + "\" }}";
+
+            var request = new HttpRequestMessage(HttpMethod.Post, (Uri)null)
+            {
+                Content = new StringContent(jsonString, Encoding.GetEncoding("windows-1251"), MediaTypeHeaderValue.Parse("application/json-rpc"))
+            };
+
+            return ExecuteAsync<ThemeResponse>(request, cancellationToken);
         }
 
         public Task<ThemesListResponse> GetThemeListAsync(ThemeListRequest request, CancellationToken cancellationToken)
@@ -89,8 +89,8 @@ namespace BrandUp.SBIS.ApiClient.CRM
     {
         Task<CreateLeadResponse> InsertRecordAsync(CreateLeadRequest request, CancellationToken cancellationToken);
         Task<ThemesListResponse> GetThemeListAsync(ThemeListRequest request, CancellationToken cancellationToken);
-        Task<ThemeResponse> GetThemeByNameAsync(ThemeRequest request, CancellationToken cancellationToken);
-        Task<LeadInfoResponse> GetLeadStatusAsync(LeadInfoRequest request, CancellationToken cancellationToken);
+        Task<ThemeResponse> GetThemeByNameAsync(string Name, CancellationToken cancellationToken);
+        Task<LeadInfoResponse> GetLeadStatusAsync(Guid id, CancellationToken cancellationToken);
         Task<AddEventResponse> AddEventAsync(AddEventRequest request, CancellationToken cancellationToken);
         Task<GetCustomerResponse> GetCustomerAsync(GetCustomerRequest request, CancellationToken cancellationToken);
         Task<SaveCustomerResponse> SaveCustomerAsync(SaveCustomerRequest request, CancellationToken cancellationToken);
