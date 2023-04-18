@@ -1,16 +1,23 @@
-﻿using BrandUp.SBIS.ApiClient.Base;
-using BrandUp.SBIS.ApiClient.Clients;
+﻿using BrandUp.SBIS.ApiClient.Clients;
 using BrandUp.SBIS.ApiClient.CRM;
 using BrandUp.SBIS.ApiClient.EDM;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BrandUp.SBIS.ApiClient
+namespace BrandUp.SBIS.ApiClient.Base
 {
-    public static class ServiceCollectionExtension
+    public class SBISBuilder : ISBISBuilder
     {
-        public static IServiceCollection AddSBISClient(this IServiceCollection services, Action<Credentials> options)
+        readonly IServiceCollection services;
+        public SBISBuilder(IServiceCollection services)
         {
-            services.AddOptions<Credentials>().Configure(options);
+            this.services = services ?? throw new ArgumentNullException(nameof(services));
+            InitClients();
+        }
+
+        public IServiceCollection Services => services;
+
+        void InitClients()
+        {
             services.AddHttpClient<ShopClient>(options =>
             {
                 options.BaseAddress = new("https://api.sbis.ru/");
@@ -23,7 +30,11 @@ namespace BrandUp.SBIS.ApiClient
             {
                 options.BaseAddress = new("https://online.sbis.ru/service/?srv=1");
             });
-            return services;
         }
+    }
+
+    public interface ISBISBuilder
+    {
+        public IServiceCollection Services { get; }
     }
 }

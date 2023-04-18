@@ -13,7 +13,7 @@ namespace BrandUp.SBIS.ApiClient.CRM
     {
         internal override ISerializer Serializer => new CrmSerializer();
 
-        public CRMClient(HttpClient httpClient, ILogger<CRMClient> logger, IOptions<Credentials> credentials) : base(httpClient, credentials.Value, logger)
+        public CRMClient(HttpClient httpClient, ILogger<CRMClient> logger, IOptions<BaseCredentials> credentials) : base(httpClient, credentials.Value, logger)
         { }
 
         #region ICRMClient members
@@ -38,7 +38,7 @@ namespace BrandUp.SBIS.ApiClient.CRM
                 Content = new StringContent(jsonString, Encoding.GetEncoding("windows-1251"), MediaTypeHeaderValue.Parse("application/json-rpc"))
             };
 
-            return ExecuteAsync<LeadInfoResponse>(request, cancellationToken);
+            return AuthorizeExecuteAsync<LeadInfoResponse>(request, cancellationToken);
         }
 
         public Task<ThemeResponse> GetThemeByNameAsync(string Name, CancellationToken cancellationToken)
@@ -50,7 +50,7 @@ namespace BrandUp.SBIS.ApiClient.CRM
                 Content = new StringContent(jsonString, Encoding.GetEncoding("windows-1251"), MediaTypeHeaderValue.Parse("application/json-rpc"))
             };
 
-            return ExecuteAsync<ThemeResponse>(request, cancellationToken);
+            return AuthorizeExecuteAsync<ThemeResponse>(request, cancellationToken);
         }
 
         public Task<ThemesListResponse> GetThemeListAsync(ThemeListRequest request, CancellationToken cancellationToken)
@@ -79,7 +79,7 @@ namespace BrandUp.SBIS.ApiClient.CRM
 
         protected async Task<TResponse> PostAsync<TResponse, TRequest>(TRequest request, CancellationToken cancellationToken)
         {
-            return await ExecuteAsync<TResponse>(ToJsonRpcRequest(request), cancellationToken);
+            return await AuthorizeExecuteAsync<TResponse>(ToJsonRpcRequest(request), cancellationToken);
         }
 
         #endregion

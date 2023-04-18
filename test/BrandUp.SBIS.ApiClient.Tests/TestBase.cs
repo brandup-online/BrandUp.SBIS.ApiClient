@@ -26,7 +26,9 @@ namespace BrandUp.SBIS.ApiClient
 
             services.AddLogging(builder => builder.AddDebug());
 
-            services.AddSBISClient(options => configuration.GetSection("Creds").Bind(options));
+            services.AddSBIS()
+                .AddApiCredentials(options => configuration.GetSection("ApiCreds").Bind(options))
+                .AddEDMCredentials(options => configuration.GetSection("EdmCreds").Bind(options));
 
             rootServiceProvider = services.BuildServiceProvider();
             serviceScope = rootServiceProvider.CreateScope();

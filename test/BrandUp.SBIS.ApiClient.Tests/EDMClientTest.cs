@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
 
-namespace BrandUp.SBIS.ApiClient.Tests
+namespace BrandUp.SBIS.ApiClient
 {
     public class EDMClientTest : TestBase
     {
@@ -17,8 +17,8 @@ namespace BrandUp.SBIS.ApiClient.Tests
         [Fact]
         public async void Success_GetDocumentList()
         {
-            var result = await client.GetDocumentListAsync(new(), CancellationToken.None);
-            output.WriteLine(result);
+            var result = await client.GetDocumentListAsync(new() { Type = "СчетИсх" }, CancellationToken.None);
+            //output.WriteLine(result);
             Assert.NotNull(result);
         }
     }

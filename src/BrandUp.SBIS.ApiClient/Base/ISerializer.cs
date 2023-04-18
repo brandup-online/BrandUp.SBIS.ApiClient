@@ -7,6 +7,7 @@ namespace BrandUp.SBIS.ApiClient.Base
         Task<Stream> SerializeAsync<T>(T content, CancellationToken cancellationToken);
         Task<T> DeserializeAsync<T>(Stream content, CancellationToken cancellationToken);
     }
+
     internal class DefaultSerializer : ISerializer
     {
         readonly JsonSerializerOptions options;

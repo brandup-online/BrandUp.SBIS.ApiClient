@@ -15,7 +15,7 @@ namespace BrandUp.SBIS.ApiClient.Clients
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         });
 
-        public ShopClient(HttpClient httpClient, ILogger<ShopClient> logger, IOptions<Credentials> credentials) : base(httpClient, credentials.Value, logger) { }
+        public ShopClient(HttpClient httpClient, ILogger<ShopClient> logger, IOptions<BaseCredentials> credentials) : base(httpClient, credentials.Value, logger) { }
 
 
         #region IShopClient
@@ -62,7 +62,7 @@ namespace BrandUp.SBIS.ApiClient.Clients
 
         async Task<T> GetAsync<T>(string endpoint, object request, CancellationToken cancellationToken)
         {
-            return await ExecuteAsync<T>(ToGetRequest(endpoint, request), cancellationToken);
+            return await AuthorizeExecuteAsync<T>(ToGetRequest(endpoint, request), cancellationToken);
         }
 
         #endregion

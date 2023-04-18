@@ -33,6 +33,7 @@ namespace BrandUp.SBIS.ApiClient.Base
         {
             using var jsonStream = await serializer.SerializeAsync(content, cancellationToken);
 
+            jsonStream.Seek(0, SeekOrigin.Begin);
             await jsonStream.CopyToAsync(stream, cancellationToken);
             contentLength = jsonStream.Length;
         }

@@ -9,14 +9,14 @@ namespace BrandUp.SBIS.ApiClient.Base
     public abstract class ClientBase
     {
         readonly HttpClient httpClient;
-        readonly Credentials credentials;
+        readonly ICredentials credentials;
         readonly protected ILogger logger;
 
         internal abstract ISerializer Serializer { get; }
 
-        protected bool IsAuthorize { get; private set; } = false;
+        protected bool IsAuthorized { get; private set; } = false;
 
-        internal ClientBase(HttpClient httpClient, Credentials credentials, ILogger logger)
+        internal ClientBase(HttpClient httpClient, ICredentials credentials, ILogger logger)
         {
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             this.credentials = credentials ?? throw new ArgumentNullException(nameof(credentials));
@@ -83,23 +83,59 @@ namespace BrandUp.SBIS.ApiClient.Base
             return await Serializer.DeserializeAsync<T>(await response.Content.ReadAsStreamAsync(cancellationToken), cancellationToken);
         }
 
+        protected virtual async Task<bool> AuthorizationAsync(ICredentials credetials, CancellationToken cancellationToken)
+        {
+            JsonSerializerOptions options = new()
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            };
+
+            var request = new Uri("https://online.sbis.ru/oauth/service/", UriKind.Absolute);
+
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, request)
+            {
+                Content = JsonContent.Create(credentials, credentials.GetType(), null, options)
+            };
+            var response = await httpClient.SendAsync(httpRequest, cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+                return false;
+            var auth = await response.Content.ReadFromJsonAsync<AuthResponse>(options, cancellationToken);
+
+            AddHeader("X-SBISSessionID", auth.Sid);
+            AddHeader("X-SBISAccessToken", auth.Token);
+            return true;
+        }
+
         #endregion
 
         #region Protected members
 
+        protected async Task<T> AuthorizeExecuteAsync<T>(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            if (!IsAuthorized)
+            {
+                IsAuthorized = await AuthorizationAsync(credentials, cancellationToken);
+                if (!IsAuthorized)
+                    return default;
+            }
+
+            return await ExecuteAsync<T>(request, cancellationToken);
+        }
+
         protected async Task<T> ExecuteAsync<T>(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            if (!IsAuthorize)
-                await AuthorizationAsync(cancellationToken);
-
             using var response = await httpClient.SendAsync(request, cancellationToken);
 
-            if (typeof(T) == typeof(string))
-                return (T)(object)await response.Content.ReadAsStringAsync(cancellationToken);
-
-
             if (!response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    IsAuthorized = false;
+                }
                 return default;
+            }
 
             try
             {
@@ -112,32 +148,9 @@ namespace BrandUp.SBIS.ApiClient.Base
             }
         }
 
-        #endregion
-
-        #region Helpers
-
-        protected async Task AuthorizationAsync(CancellationToken cancellationToken)
+        protected void AddHeader(string headerName, string headerValue)
         {
-            JsonSerializerOptions options = new()
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-            };
-
-            var request = new Uri("https://online.sbis.ru/oauth/service/", UriKind.Absolute);
-
-            var httpRequest = new HttpRequestMessage(HttpMethod.Post, request)
-            {
-                Content = JsonContent.Create(credentials, null, options)
-            };
-            var response = await httpClient.SendAsync(httpRequest, cancellationToken);
-
-            var auth = await response.Content.ReadFromJsonAsync<AuthResponse>(options, cancellationToken);
-
-            //httpClient.DefaultRequestHeaders.Add("X-SBISAccessToken", auth.AccessToken);
-            httpClient.DefaultRequestHeaders.Add("X-SBISSessionId", auth.Sid);
-
-            IsAuthorize = true;
+            httpClient.DefaultRequestHeaders.Add(headerName, headerValue);
         }
 
         #endregion
