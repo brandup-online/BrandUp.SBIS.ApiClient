@@ -21,5 +21,23 @@ namespace BrandUp.SBIS.ApiClient
             //output.WriteLine(result);
             Assert.NotNull(result);
         }
+
+        [Fact]
+        public async void Success_WriteDocument()
+        {
+            #region Preparation
+            //var crmClient = Services.GetRequiredService<CRMClient>();
+            //var leadResponse = await crmClient.CreateLeadAsync(new()
+            //{
+            //    ReglamentId = 161304,
+            //    ClientData = new() { Person = 706.ToString() }
+            //}, CancellationToken.None);
+
+            #endregion
+            var documnent = DocumentBuilder.CheckFromLead(Guid.Parse("463bc35d-0b99-41d6-b324-1232549b9c6d"));
+            var result = await client.WriteDocumentAsync(new() { Document = documnent }, CancellationToken.None);
+            //output.WriteLine(result);
+            Assert.NotNull(result);
+        }
     }
 }

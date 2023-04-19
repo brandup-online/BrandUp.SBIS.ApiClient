@@ -57,7 +57,7 @@ namespace BrandUp.SBIS.ApiClient
 
             #endregion
 
-            var leadResponse = await client.InsertRecordAsync(new()
+            var leadResponse = await client.CreateLeadAsync(new()
             {
                 ReglamentId = 161304,
                 ClientData = new() { Person = 706.ToString() }
@@ -97,14 +97,14 @@ namespace BrandUp.SBIS.ApiClient
         [Fact]
         public async void Success_GetLeadStatus()
         {
-            var response = await client.GetLeadStatusAsync(Guid.Parse("37c3a18d-ac1e-4eb5-a1bd-89776aad46b2"), CancellationToken.None);
+            var response = await client.GetLeadStatusAsync(Guid.Parse("463bc35d-0b99-41d6-b324-1232549b9c6d"), CancellationToken.None);
             Assert.NotNull(response);
         }
 
         [Fact]
         public async void Success_AddEvent()
         {
-            var response = await client.AddEventAsync(new() { EventType = 3, LeadID = 1200, KindOfContact = 1, Comment = "Тестовое событие", Date = DateTime.UtcNow.AddDays(1) }, CancellationToken.None);
+            var response = await client.AddEventAsync(new() { EventType = 3, LeadID = 1366, KindOfContact = 1, Comment = "Тестовое событие", Date = DateTime.UtcNow.AddDays(1) }, CancellationToken.None);
             //output.WriteLine(response);
             Assert.NotNull(response);
         }

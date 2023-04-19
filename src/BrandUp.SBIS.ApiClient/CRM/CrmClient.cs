@@ -58,7 +58,7 @@ namespace BrandUp.SBIS.ApiClient.CRM
             return PostAsync<ThemesListResponse, ThemeListRequest>(request, cancellationToken);
         }
 
-        public Task<CreateLeadResponse> InsertRecordAsync(CreateLeadRequest request, CancellationToken cancellationToken)
+        public Task<CreateLeadResponse> CreateLeadAsync(CreateLeadRequest request, CancellationToken cancellationToken)
         {
             return PostAsync<CreateLeadResponse, CreateLeadRequest>(request, cancellationToken);
         }
@@ -87,7 +87,7 @@ namespace BrandUp.SBIS.ApiClient.CRM
 
     public interface ICRMClient
     {
-        Task<CreateLeadResponse> InsertRecordAsync(CreateLeadRequest request, CancellationToken cancellationToken);
+        Task<CreateLeadResponse> CreateLeadAsync(CreateLeadRequest request, CancellationToken cancellationToken);
         Task<ThemesListResponse> GetThemeListAsync(ThemeListRequest request, CancellationToken cancellationToken);
         Task<ThemeResponse> GetThemeByNameAsync(string Name, CancellationToken cancellationToken);
         Task<LeadInfoResponse> GetLeadStatusAsync(Guid id, CancellationToken cancellationToken);

@@ -45,7 +45,7 @@ namespace BrandUp.SBIS.ApiClient.EDM
 
         public Task<WriteDocumentResponse> WriteDocumentAsync(WriteDocumentRequest request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return AuthorizeExecuteAsync<WriteDocumentResponse>(ToJsonRpcRequest(request), cancellationToken);
         }
 
         #endregion
