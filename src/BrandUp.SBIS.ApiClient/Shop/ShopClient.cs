@@ -15,7 +15,7 @@ namespace BrandUp.SBIS.ApiClient.Clients
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         });
 
-        public ShopClient(HttpClient httpClient, ILogger<ShopClient> logger, IOptions<BaseCredentials> credentials) : base(httpClient, credentials.Value, logger) { }
+        public ShopClient(HttpClient httpClient, ILogger<ShopClient> logger, IOptions<ServiceCredentials> credentials) : base(httpClient, credentials.Value, logger) { }
 
 
         #region IShopClient

@@ -2,7 +2,7 @@
 using BrandUp.SBIS.ApiClient.Base.Attributes;
 using System.Text.Json.Serialization;
 
-namespace BrandUp.SBIS.ApiClient.EDM
+namespace BrandUp.SBIS.ApiClient.EDM.Credetials
 {
     [RpcCommandInfo(Command = "СБИС.Аутентифицировать")]
     public class EDMCredentials : ICredentials

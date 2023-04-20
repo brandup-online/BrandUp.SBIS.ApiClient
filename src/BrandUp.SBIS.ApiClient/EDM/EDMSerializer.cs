@@ -14,8 +14,10 @@ namespace BrandUp.SBIS.ApiClient.EDM
         public EDMSerializer(JsonSerializerOptions options = null)
         {
             this.options = options ?? new JsonSerializerOptions();
+            this.options.Converters.Add(new JsonStringEnumConverter());
             this.options.Converters.Add(new BoolConverter());
             this.options.Converters.Add(new DateTimeConverter());
+            this.options.Converters.Add(new DateOnlyConverter());
         }
 
         public async Task<Stream> SerializeAsync<T>(T content, CancellationToken cancellationToken)
@@ -157,7 +159,27 @@ namespace BrandUp.SBIS.ApiClient.EDM
 
             public override void Write(Utf8JsonWriter writer, DateTime? value, JsonSerializerOptions options)
             {
-                writer.WriteStringValue(value.Value.ToString() ?? " ");
+                writer.WriteStringValue(value.Value.ToString("dd.MM.yyyy hh.mm.ss") ?? " ");
+            }
+        }
+
+
+        class DateOnlyConverter : JsonConverter<DateOnly?>
+        {
+            public override DateOnly? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                var raw = Encoding.UTF8.GetString(reader.ValueSpan);
+                if (string.IsNullOrEmpty(raw))
+                    return null;
+
+                var array = raw.Trim().Replace(' ', '.').Split('.').Select(s => int.Parse(s)).ToArray();
+
+                return new DateOnly(array[2], array[1], array[0]);
+            }
+
+            public override void Write(Utf8JsonWriter writer, DateOnly? value, JsonSerializerOptions options)
+            {
+                writer.WriteStringValue(value.Value.ToString("dd.MM.yyyy") ?? " ");
             }
         }
 

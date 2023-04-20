@@ -1,4 +1,5 @@
 ﻿using BrandUp.SBIS.ApiClient.Base.Attributes;
+using BrandUp.SBIS.ApiClient.EDM.Models;
 using System.Text.Json.Serialization;
 
 namespace BrandUp.SBIS.ApiClient.EDM
@@ -7,7 +8,7 @@ namespace BrandUp.SBIS.ApiClient.EDM
     public class DocumentListRequest
     {
         [JsonPropertyName("Тип")]
-        public string Type { get; set; }
+        public DocumentType Type { get; set; }
     }
 
 }

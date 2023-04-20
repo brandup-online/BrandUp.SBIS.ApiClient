@@ -9,7 +9,7 @@ namespace BrandUp.SBIS.ApiClient.EDM
             return new()
             {
                 //Id = Guid.NewGuid().ToString(),
-                Type = "СчетИсх",
+                Type = DocumentType.AccountOut,
                 Regulation = new()
                 {
                     Id = "bccdc2e6-7fd6-11e2-aa7a-d79063093e8a",

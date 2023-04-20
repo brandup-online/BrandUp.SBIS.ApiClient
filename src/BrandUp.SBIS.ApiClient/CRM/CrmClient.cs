@@ -13,7 +13,7 @@ namespace BrandUp.SBIS.ApiClient.CRM
     {
         internal override ISerializer Serializer => new CrmSerializer();
 
-        public CRMClient(HttpClient httpClient, ILogger<CRMClient> logger, IOptions<BaseCredentials> credentials) : base(httpClient, credentials.Value, logger)
+        public CRMClient(HttpClient httpClient, ILogger<CRMClient> logger, IOptions<ServiceCredentials> credentials) : base(httpClient, credentials.Value, logger)
         { }
 
         #region ICRMClient members

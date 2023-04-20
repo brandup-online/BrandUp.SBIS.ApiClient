@@ -18,7 +18,7 @@ namespace BrandUp.SBIS.ApiClient.CRM.Responses
         [JsonPropertyName("Избранный")]
         public bool? IsFavorite { get; set; }
         [JsonPropertyName("ТипДокумента")]
-        public DocumentType DocumentType { get; set; }
+        public TypeOfDocument DocumentType { get; set; }
         [JsonPropertyName("ТипДокументооборота")]
         public int? DocumentFlowType { get; set; }
         [JsonPropertyName("ТипВходящегоДокумента")]
@@ -59,7 +59,7 @@ namespace BrandUp.SBIS.ApiClient.CRM.Responses
         public string SiteTemplateId { get; set; }
     }
 
-    public class DocumentType
+    public class TypeOfDocument
     {
         [JsonPropertyName("@ТипДокумента")]
         public int? TypeId { get; set; }

@@ -2,7 +2,7 @@
 
 namespace BrandUp.SBIS.ApiClient.Base
 {
-    public class BaseCredentials : ICredentials
+    public class ServiceCredentials : ICredentials
     {
         [JsonPropertyName("app_client_id")]
         public string AppId { get; set; }

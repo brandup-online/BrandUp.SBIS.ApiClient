@@ -30,6 +30,10 @@ namespace BrandUp.SBIS.ApiClient.Base
             {
                 options.BaseAddress = new("https://online.sbis.ru/service/?srv=1");
             });
+            services.AddHttpClient<EmployeeClient>(options =>
+            {
+                options.BaseAddress = new("https://online.sbis.ru/service/?srv=1");
+            });
         }
     }
 

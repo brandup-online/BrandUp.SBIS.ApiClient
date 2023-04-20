@@ -5,25 +5,25 @@ namespace BrandUp.SBIS.ApiClient.EDM.Models
     public class Document
     {
         [JsonPropertyName("Идентификатор")]
-        public string Id { get; set; }
+        public Guid? Id { get; set; }
         [JsonPropertyName("Дата")]
-        public string Date { get; set; }
+        public DateOnly? Date { get; set; }
         [JsonPropertyName("Номер")]
         public string Number { get; set; }
         [JsonPropertyName("Сумма")]
         public string Sum { get; set; }
         [JsonPropertyName("Срок")]
-        public DateTime? Expiration { get; set; }
+        public DateOnly? Expiration { get; set; }
         [JsonPropertyName("Название")]
         public string Name { get; set; }
         [JsonPropertyName("Примечание")]
         public string Note { get; set; }
         [JsonPropertyName("ДатаВремяСоздания")]
-        public DateTime? CreationDateTime { get; set; }
+        public DateOnly? CreationDate { get; set; }
         [JsonPropertyName("Удален")]
         public bool? IsDeleted { get; set; }
         [JsonPropertyName("Тип")]
-        public string Type { get; set; }
+        public DocumentType? Type { get; set; }
         [JsonPropertyName("Подтип")]
         public string SubType { get; set; }
         [JsonPropertyName("Расширение")]
@@ -55,9 +55,9 @@ namespace BrandUp.SBIS.ApiClient.EDM.Models
         [JsonPropertyName("Подразделение")]
         public Subdivision Subdivision { get; set; }
         [JsonPropertyName("Ответственный")]
-        public Employee Responsible { get; set; }
+        public EmployeeInfo Responsible { get; set; }
         [JsonPropertyName("Автор")]
-        public Employee Author { get; set; }
+        public EmployeeInfo Author { get; set; }
         [JsonPropertyName("Вложение")]
         public Attachment[] Attachments { get; set; }
         [JsonPropertyName("ВложениеУчета")]
@@ -69,6 +69,7 @@ namespace BrandUp.SBIS.ApiClient.EDM.Models
         [JsonPropertyName("ДопПоля")]
         public string AdditionalKeys { get; set; }
     }
+
     public class Stage
     {
         [JsonPropertyName("Название")]
@@ -111,7 +112,7 @@ namespace BrandUp.SBIS.ApiClient.EDM.Models
         [JsonPropertyName("ВерсияФормата")]
         public string FormatVersion { get; set; }
         [JsonPropertyName("Дата")]
-        public string Date { get; set; }
+        public DateOnly Date { get; set; }
         [JsonPropertyName("Название")]
         public string Name { get; set; }
         [JsonPropertyName("Номер")]
@@ -139,7 +140,7 @@ namespace BrandUp.SBIS.ApiClient.EDM.Models
         [JsonPropertyName("Идентификатор")]
         public string Id { get; set; }
         [JsonPropertyName("Дата")]
-        public DateTime? Date { get; set; }
+        public DateOnly? Date { get; set; }
         [JsonPropertyName("Номер")]
         public string Number { get; set; }
         [JsonPropertyName("Тип")]
@@ -203,7 +204,7 @@ namespace BrandUp.SBIS.ApiClient.EDM.Models
         [JsonPropertyName("Состояние операции")]
         public string OperationState { get; set; }
     }
-    public class Employee
+    public class EmployeeInfo
     {
         [JsonPropertyName("Фамилия")]
         public string Surname { get; set; }

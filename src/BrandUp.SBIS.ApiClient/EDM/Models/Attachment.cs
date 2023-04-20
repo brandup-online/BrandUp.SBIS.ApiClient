@@ -28,9 +28,9 @@ namespace BrandUp.SBIS.ApiClient.EDM.Models
         public bool? IsEncrypted { get; set; }
         //TODO: переделать в енам
         [JsonPropertyName("ТипШифрования")]
-        public string EncryptingType { get; set; }
+        public EncryptType? EncryptingType { get; set; }
         [JsonPropertyName("Дата")]
-        public DateTime? Date { get; set; }
+        public DateOnly? Date { get; set; }
         [JsonPropertyName("Номер")]
         public string Number { get; set; }
         [JsonPropertyName("Сумма")]
